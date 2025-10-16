@@ -1,4 +1,4 @@
-# Meta Machines
+# Antic Nova
 
-- Данный проект посвящён экосистеме Meta Machines.
-- Официальный сайт проекта - https://meta-machine.it.com/
+- Сайт-галлерея для онлайн Аукциона
+
