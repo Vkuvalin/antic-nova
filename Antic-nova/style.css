@@ -1,0 +1,892 @@
+/* ╔═══════════════════════════════════ СТИЛЬ ════════════════════════════════════╗ */
+    :root {
+      --neon-yellow: #ffe600;
+      --neon-blue: #00ffff;
+      --bg-dark: #0d0d0d;
+      --text-light: #e6e6e6;
+      --text-mid: #aaa;
+	  
+
+
+
+      --color-research: #e7ba6530;	    /* Исследование (Research Machine) 	*/
+      --color-creative: #c121ae4b;	    /* Креатив (Creative Machine) 		  */
+      --color-meta: #e7ba6520;		      /* Метамашина (Meta Machine) 		    */
+      --color-strategy: #fb920935; 	  /* Стратегия (Strategy Machine) 	  */
+      --color-education: #99969c59;
+      --color-muted: #dcdcdc;
+      
+    }
+
+/* ╔══════════════════════════════════ БАЗОВЫЕ */
+    html, body {
+      overflow-x: hidden;
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+    }
+    
+  body {
+    overflow-y: scroll; /* ← скролл остаётся */
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* IE/Edge */
+  }
+
+  body::-webkit-scrollbar {
+    display: none;                /* Chrome, Safari */
+  }
+	
+  p {
+    hyphens: auto;              	/* Перенос по слогам */
+    overflow-wrap: break-word;  	/* Перенос по словам */
+    word-break: break-word;     	/* Дополнительная подстраховка */
+  }
+/* ╚══════════════════════════════════ */
+
+
+
+
+/* ╔══════════════════════════════════ Оформление документации */
+  .spesial-strong {
+    color: var(--neon-yellow) !important;
+  }
+
+  .table-bottom-border-neon td {
+    border-bottom: 1px solid rgba(255, 230, 0, 0.15);
+  }
+
+
+  /* ---------- BUTTON ----------*/
+  /* 💻 Только для десктопов (больше 768px): */
+  @media (min-width: 769px) {
+  .instruction {
+    position: static;
+    left: 0;
+    z-index: 100;
+  }
+  }
+
+  /* 📱 Только для мобильных устройств (до 768px): */
+  @media (max-width: 768px) {
+  .instruction {
+    position: static;
+    left: 0;
+    z-index: 100;
+  }
+  }
+/* -------------------------------------*/
+
+  .instruction button {
+    background: #000000;
+    position: static;
+    border: none;
+    padding: 5px 10px;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: 600;
+    width: 120px;
+    cursor: pointer;
+    transform: skew(-21deg);
+    border: 1px solid #ffee00;
+    color: rgba(255, 230, 0, 0.85);
+    box-shadow: 0 0 1px #ffee00,
+                0 0 5px #ffee00;
+    -webkit-tap-highlight-color: transparent; /* убираем синий флэш */
+  }
+
+  .instruction span {
+    display: inline-block;
+    transform: skew(21deg);
+    width: 100%;
+    height: 100%;
+  }
+
+  .instruction button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 100%;
+    left: 0;
+    background: rgba(255, 230, 0, 0.85);
+    opacity: 0;
+    z-index: -1;
+    transition: all 0.5s;
+    transform: scale(0.97, 0.9);
+    box-shadow: 0 0 30px #ffee00;
+  }
+
+  .instruction span:hover {
+    transform: skew(5deg);
+  }
+
+  .instruction button:hover {
+    color: #000000;
+  }
+
+  .instruction button:hover::before {
+    left: 0;
+    right: 0;
+    opacity: 1;
+  }
+/* ╚══════════════════════════════════ */
+
+/* -------------------------------------*/
+
+    .tab {
+      color: var(--text-mid);
+      text-decoration: none;
+      position: relative;
+      padding-bottom: 3px;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    /* .tab:hover,
+    .tab.active {
+      color: var(--neon-yellow);
+    } */
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(200,168,107,.25);
+      box-shadow: -2px 5px 10px rgba(200,168,107,.25),
+                  2px 5px 10px rgba(200,168,107,.25),
+                  -5px 5px 20px rgba(200,168,107,.25),
+                  5px 5px 20px rgba(200,168,107,.25);
+    }
+/* ╚══════════════════════════════════ */
+
+/* ╔══════════════════════════════════ ОСНОВНОЙ КОНТЕНТ (потом поправить)*/
+    .content {
+      padding: 2rem;
+      max-width: 1040px;
+      margin: auto;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: grid;
+      height: 100%;
+    }
+
+    /* .section.active.page.sidebar {
+      display: block;
+      height: 90%;
+    } */
+
+    .content h1 {
+      color: var(--neon-yellow);
+      padding-left: 12px;
+      text-shadow: 0 0 2px var(--neon-yellow);
+      margin-top: 2rem;
+      text-align: center;
+    }
+	  
+    .content h2 {
+      color: var(--neon-yellow);
+      border-left: 4px solid var(--neon-yellow);
+      padding-left: 12px;
+      text-shadow: 0 0 2px var(--neon-yellow);
+      font-size: 1.2rem;
+      margin-top: 2rem;
+    }
+
+    .content p {
+      line-height: 1.65;
+      color: var(--text-light);
+      text-shadow: 0 0 1px #000;
+    }
+
+    .content strong {
+       padding: 1px;
+    }
+
+    .container-inline { 
+    display: flex; 
+	  flex-direction: row; 
+	  flex-wrap: wrap; 
+	  justify-content: center;
+  	align-items: center;
+    }  
+/* ╚══════════════════════════════════ */
+
+/* ╔══════════════════════════════════  */
+	  
+.welcome-description-1 {
+	color: var(--neon-yellow) !important;
+	text-align: center;
+	hyphens: none;
+}
+	
+	
+.welcome-description-2 {
+	text-align: center;
+	hyphens: none;
+	margin: 0;
+	padding: 0;
+}
+	  
+/* ╚══════════════════════════════════ */
+	  
+
+    .glow-box {
+      border: 1px solid var(--neon-blue);
+      box-shadow: 0 0 2px var(--neon-blue), 0 0 14px var(--neon-blue);
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-top: 2rem;
+    }
+
+    .glow-box h3 {
+      color: var(--neon-blue);
+      margin-top: 0;
+    }
+
+    .glow-box p {
+      color: #ccf;
+    }
+
+    .gpt-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+      padding-bottom: 2rem;
+    }
+	
+/* ╔═══════════════════════════════════ GPT CARDS ═════════════════════════════════╗ */
+/* Общие стили и анимации для всех трёх вариантов */
+.gpt-card,
+.gpt-card-low-color,
+.gpt-card-low-color2 {
+  background-color: rgb(44, 44, 44);
+  border: 1px solid currentColor;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  cursor: pointer;
+  color: currentColor;
+  -webkit-tap-highlight-color: transparent; /* убираем синий флэш */
+
+  /* анимация входа и пульса */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0;
+  transform: translateY(20px);
+
+  /* общий набор animation-свойств */
+  animation-duration: 1.3s, 2s;
+  animation-delay: 0.1s, 0s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease, ease-in-out;
+  animation-iteration-count: 1, infinite;
+  animation-direction: normal, alternate;
+  animation-play-state: paused;
+}
+
+/* только имя второго animation (glow-эффекта) разное */
+.gpt-card {
+  animation-name: fadeUp, glowPulse;
+}
+.gpt-card-low-color {
+  animation-name: fadeUp, glowPulse-low-color;
+}
+.gpt-card-low-color2 {
+  animation-name: fadeUp, glowPulse-low-color2;
+}
+
+/* при появлении в зоне видимости запускаем анимацию */
+.gpt-card.is-visible,
+.gpt-card-low-color.is-visible,
+.gpt-card-low-color2.is-visible {
+  animation-play-state: running;
+}
+
+/* hover: общий transform и анимация, отдельно — box-shadow */
+.gpt-card:hover,
+.gpt-card-low-color:hover,
+.gpt-card-low-color2:hover {
+  transform: translateY(20px) scale(1.1);
+  animation-name: fadeUp;
+  animation-duration: 0.6s;
+  animation-delay: 0s;
+  animation-fill-mode: forwards;
+}
+
+/* специфичные тени для каждого класса */
+.gpt-card:hover {
+  box-shadow: 0 0 18px currentColor;
+}
+.gpt-card-low-color:hover {
+  box-shadow: 
+    0 0 12px currentColor,
+    0 0 18px currentColor;
+}
+.gpt-card-low-color2:hover {
+  box-shadow:
+    0 0 8px currentColor,
+    0 0 13px currentColor,
+    0 0 18px currentColor;
+}
+
+/* тексты внутри карт */
+.gpt-card h3,
+.gpt-card-low-color h3,
+.gpt-card-low-color2 h3 {
+  color: currentColor;
+  margin: 0 0 0.25rem 0;
+}
+.gpt-card p,
+.gpt-card-low-color p,
+.gpt-card-low-color2 p {
+  color: var(--text-mid);
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+/* логотип */
+.gpt-logo {
+  width: 48px;
+  height: 48px;
+}
+/* ╚═════════════════════════════════════════════════════════════════════════════╝ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ╔══════════════════════════════════ Оформление документации */
+
+/* ---------- Общее ----------*/
+.article-text p {
+  margin-top: -10px;
+  line-height: 1.4;
+  text-indent: 1em;
+  color: var(--color-muted);
+}
+
+
+.article-text h1 {
+  content: "◉";
+  color:var(--accent);
+}
+
+.article-text h2 {
+  font-size: 20px;
+  margin-left: 12px;
+  color: var(--accent);
+}
+
+
+.article-span {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  line-height: 1;
+}
+
+.icat {
+  transform: scale(1.2);
+}
+
+
+.article-text ul {
+  list-style: none;
+  padding-left: 2em;
+  position: relative; /* ← обязательно! для работы ::before */
+  margin-top: -5px;
+}
+
+.article-text ul li {
+  position: relative;
+  padding-left: 1.2em;
+  line-height: 1.4;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+.article-text ul li::before {
+  content: "◉";
+  position: absolute;
+  left: 0em;
+  top: 0.1em; /* можно подогнать визуально */
+  color: var(--accent);
+  font-size: 1em;
+  line-height: 1.2;
+  transform: scale(0.8);
+}
+
+.article-text strong {
+  margin-left: 10px;
+  color: var(--accent);
+}
+
+/* -------------------------------------*/
+
+
+/* ---------- Сокрытие h2 в документации ----------*/
+.article-collapsible {
+  color: var(--neon-yellow);
+  border-left: 4px solid var(--neon-yellow);
+  padding-left: 12px;
+  text-shadow: 0 0 2px var(--neon-yellow);
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  cursor: pointer;          /* чтобы было понятно, что можно кликать */
+  user-select: none;
+  transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent; /* убираем синий флэш */
+}
+
+.article-collapsible:hover {
+  text-shadow: -5px 5px 5px rgba(255, 230, 0, 0.2),
+               -5px -5px 5px rgba(255, 230, 0, 0.2),
+               5px -5px 10px rgba(255, 230, 0, 0.4),
+               5px 5px 10px rgba(255, 230, 0, 0.4);
+}
+
+
+
+/* Контент под заголовком — изначально скрыт */
+.article-content {
+  display: none;
+  padding: 0 18px 20px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-out;
+}
+
+/* Когда .article-collapsible получает класс .active — показываем соседний .content */
+.article-collapsible.active + .article-content {
+  display: block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+/* ╔═════════════════════════════════ CARDS COLORS ════════════════════════════════╗ */
+.architecture-img {
+  cursor: zoom-in;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 2rem auto;
+  border-radius: 8px;
+  box-shadow: 0 0 25px rgba(255, 255, 0, 0.2);
+}
+
+.img-dialog {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  max-height: 100%;
+  cursor: zoom-out;
+  background: transparent;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.25);
+  border: none;
+}
+
+.img-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.8);
+}
+/* ╚═════════════════════════════════════════════════════════════════════════════╝ */	
+
+
+/* ╔══════════════════════════════════ KEY FRAMES ═════════════════════════════════╗ */
+
+/* ╔══════════════════════════════════ Анимация кружков */	  
+
+.pulse-circle {
+  position: absolute;
+  width: 0px;
+  height: 0px;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+  animation: pulseAnimation 3.5s ease-out forwards;
+  z-index: -1000;
+  animation-timing-function: cubic-bezier(0.1, 0.4, 1, 1); 
+}
+
+#pulse-layer {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
+}
+
+
+/* 📱 Только для мобильных устройств (до 768px): */
+@media (max-width: 768px) {
+  @keyframes pulseAnimation {
+    0% {
+      width: 0px;
+      height: 0px;
+      opacity: 0;
+      box-shadow: 0 0 0 0 currentColor;
+      background-color: currentColor;
+    }
+    70% {
+      width: 40px;
+      height: 40px;
+      opacity: 0.35;
+      box-shadow: 0 0 14px 20px currentColor;
+      margin-left: -20px;
+      margin-top: -20px;
+      background-color: currentColor;
+    }
+    100% {
+      width: 80px;
+      height: 80px;
+      opacity: 0;
+      box-shadow: 0 0 14px 20px currentColor;
+      margin-left: -40px;
+      margin-top: -40px;
+      background-color: currentColor;
+    }
+  }
+}
+
+	  
+/* 💻 Только для десктопов (больше 768px): */
+@media (min-width: 769px) {
+  @keyframes pulseAnimation {
+    0% {
+      width: 0px;
+      height: 0px;
+      opacity: 0;
+      box-shadow: 0 0 0 0 currentColor;
+      background-color: currentColor;
+    }
+    70% {
+      width: 40px;
+      height: 40px;
+      opacity: 0.45;            
+      box-shadow: 0 0 14px 20px currentColor;
+      margin-left: -20px;
+      margin-top: -20px;
+      background-color: currentColor;
+    }
+    100% {
+      width: 80px;
+      height: 80px;
+      opacity: 0;
+      box-shadow: 0 0 14px 20px currentColor;
+      margin-left: -40px;
+      margin-top: -40px;
+      background-color: currentColor;
+    }
+  }
+}
+
+/* ╚══════════════════════════════════ */
+
+
+/* ╔══════════════════════════════════ Анимация линий */
+/* обёртка */
+.pulse-line-wrapper {
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* сама линия */
+.pulse-line {
+  position: absolute;           /* нужна, чтобы translateX отрабатывал от левого края */
+  width: var(--length);         /* задаём ширину через CSS-var */
+  height: 0.7px;
+  background-color: currentColor;
+  opacity: 0;
+  transform-origin: left center;/* «хвост» линии в начале координат */
+  animation: line-fly 2s linear forwards;
+}
+
+@keyframes line-fly {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  10% { opacity: 0.2; }
+  70% { opacity: 0.45; }
+  100% {
+    transform: translateX(var(--distance));
+    opacity: 0;
+  }
+}
+
+/* ╚══════════════════════════════════ */
+
+
+/* ╔══════════════════════════════════ Пульсация карточек */	  
+	  
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 6px transparent;
+  }
+  100% {
+    box-shadow: 0 0 14px currentColor;
+  }
+}
+
+@keyframes glowPulse-low-color {
+  0% {
+    box-shadow: 0 0 6px transparent;
+  }
+  100% {
+    box-shadow:
+	0 0 10px currentColor,
+	0 0 18px currentColor;
+  }
+}
+
+@keyframes glowPulse-low-color2 {
+  0% {
+    box-shadow: 0 0 6px transparent;
+  }
+  100% {
+    box-shadow:
+	0 0 8px currentColor,
+	0 0 13px currentColor,
+	0 0 18px currentColor;
+  }
+}
+	  
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .gpt-card,
+      .gpt-card-low-color,
+      .gpt-card-low-color2 {
+          flex-direction: column;
+          text-align: center;
+      }
+   }
+
+    @media (max-width: 480px) {
+      .gpt-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .gpt-card {
+        padding: 1rem;
+      }
+    }
+
+/* ╚══════════════════════════════════ */
+	  
+/* ╚═════════════════════════════════════════════════════════════════════════════╝ */
+
+
+/* ╔══════════════════════════════════ rotating-description ═════════════════════════════════╗ */
+
+/* ╔══════════════════════════════════ rotating-description */	  
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1.5s forwards;
+}
+.fade-out {
+  opacity: 1;
+  animation: fadeOut 1.5s forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; }
+}
+
+#rotating-description {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+	  
+@keyframes slide-out-left {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(-80px); opacity: 0; }
+}
+@keyframes slide-out-right {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(80px); opacity: 0; }
+}
+@keyframes slide-in-left {
+  from { transform: translateX(-80px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(80px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.slide-out-left   { animation: slide-out-left 1.3s forwards; }
+.slide-out-right  { animation: slide-out-right 1.3s forwards; }
+.slide-in-left    { animation: slide-in-left 1.3s forwards; }
+.slide-in-right   { animation: slide-in-right 1.3s forwards; }
+	  
+/* ╚══════════════════════════════════ */
+
+
+	  
+/* ╔══════════════════════════════════ rotating-description */	  
+
+/* 📱 Только для мобильных устройств (до 768px): */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+   #rotating-description {
+    min-height: 20em;
+  }
+}
+
+/* 💻 Только для десктопов (больше 768px): */
+@media (min-width: 769px) {
+  .desktop-only {
+    display: block;
+  }
+}
+	  
+/* ╚══════════════════════════════════ */
+
+/* ╚═════════════════════════════════════════════════════════════════════════════╝ */
+
+
+
+/* ╔══════════════════════════════════ Навигация ═══════════════════════════════╗ */
+  .burger {
+    display: none;                /* desktop hidden */
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 1.8rem;
+    line-height: 1;
+    color: var(--neon-yellow);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent; /* убираем синий флэш */
+  }
+
+  /* ─────────────────────────  MOBILE‑MENU  */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 4rem 2rem;
+    gap: 1.5rem;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1500;
+  }
+  .mobile-menu a {
+    color: var(--neon-yellow);
+    padding: .3rem 2rem;
+    font-size: 1.1rem;
+    text-decoration: none;
+  }
+  .mobile-menu.active {
+    transform: translateX(0);
+  }
+  .mobile-link {
+    font-size: 1.4rem;
+    color: var(--text-light);
+  }
+  .mobile-link:hover,
+  .mobile-link.active {
+    color: var(--neon-yellow);
+  }
+
+  /* ─────────────────────────  RESPONSIVE  */
+  @media (max-width: 768px) {
+    .burger {
+      display: block;             /* show burger */
+    }
+    .tabs {
+      display: none;              /* hide classic tabs */
+    }
+  }
+
+  /* ─────────────────────────  TOPBAR‑HIDE  */
+  .topbar {
+    transition: transform 0.25s ease;
+  }
+  .topbar--hidden {
+    transform: translateY(calc(-100% + 1px)); /* leave 1‑px border */
+  }
+/* ╚═════════════════════════════════════════════════════════════════════════════╝ */
