@@ -93,7 +93,7 @@
     
     /* ---------- Сайдбар категорий ---------- */
     .sidebar{position: sticky; top:76px; height: calc(100dvh - 96px); z-index: 9;}
-    .sidewrap{position: absolute;width:76px; height: 76px; transition: width .25s ease; background:var(--panel); overflow: auto; border:1px solid var(--line); border-radius: var(--radius-lg);  box-shadow: var(--shadow); -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;}
+    .sidewrap{position: absolute; width:76px; height: 76px; transition: width .25s ease; background:var(--panel); overflow: auto; border:1px solid var(--line); border-radius: var(--radius-lg);  box-shadow: var(--shadow); -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;}
     .sidewrap:hover{width: 220px; height: calc(100dvh - 96px); }
     .sidewrap::-webkit-scrollbar{width: 0; height: 0;}
     .catlist{list-style:none; margin:0px; padding:0px}
@@ -116,6 +116,15 @@
     #catList li:has(> .catbtn.active) { order: -1; } /* активный li всегда сверху */
 
 
+    /* временно блокируем раскрытие по hover */
+    .sidebar.no-hover .sidewrap,
+    .sidebar.no-hover:hover .sidewrap {
+      width: 76px;           /* твой «закрытый» размер */
+      height: 76px;          /* твой «закрытый» размер */
+    }
+
+
+
 
     /* ---------- Галерея ---------- */
     .main{
@@ -129,7 +138,7 @@
     .section-sub{color:var(--muted)}
 
     .grid{
-      display:grid; gap: var(--gap);
+      margin-top: 20px; display:grid; gap: var(--gap); transform: translateX(-7%);
       grid-template-columns: repeat(12, 1fr);
     }
 

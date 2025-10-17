@@ -92,6 +92,8 @@
     const PAGE_SIZE = 12;
     // ####################################
 
+
+
     // ####################################
     // Рендер категорий в сайдбаре
     function renderCategories(){
@@ -114,6 +116,10 @@
           btn.classList.add('active');
           const key = btn.getAttribute('data-cat');
           applyFilter(key);
+          
+          document.querySelector('.sidebar')?.classList.add('no-hover');
+          setTimeout(() => document.querySelector('.sidebar')?.classList.remove('no-hover'), 320);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
     }
