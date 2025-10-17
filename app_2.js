@@ -89,6 +89,7 @@
     let filtered = [...lots];
     let page = 0;
     let key_name = 0;
+    let counterHover = 0;
     const PAGE_SIZE = 12;
     // ####################################
 
@@ -118,7 +119,20 @@
           applyFilter(key);
 
           document.querySelector('.sidebar')?.classList.add('no-hover');
-          setTimeout(() => document.querySelector('.sidebar')?.classList.remove('no-hover'), 320);
+          if (window.innerWidth > 768){
+            setTimeout(() => document.querySelector('.sidebar')?.classList.remove('no-hover'), 320);
+          }else {
+            if (counterHover == 0) {
+              document.querySelector('.sidebar')?.classList.remove('no-hover');
+              counterHover = 1;
+            }else{
+              document.querySelector('.sidebar')?.classList.add('no-hover');
+              counterHover = 0;
+              // setTimeout(() => document.querySelector('.sidebar')?.classList.remove('no-hover'), 1000);
+            }
+          }
+
+          
           // window.scrollTo({ top: 0, behavior: 'smooth' });
           document.querySelector('.sidewrap')?.scrollTo({ top: 0, behavior: 'smooth' });
           window.scrollTo(0, 0);
