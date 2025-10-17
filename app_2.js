@@ -152,7 +152,13 @@
 
       categories.forEach((c, idx) =>{
         if (c.key === key){
-          $('#nameCat').textContent = `${c.label}`;
+          
+          if (key === 'all'){
+            $('#nameCat').textContent = `Галерея лотов • Все`;
+          }else {
+            $('#nameCat').textContent = `${c.label}`;
+          }
+
         }
       })
     }

@@ -834,7 +834,7 @@
     font-family: inherit;
     font-size: 1.8rem;
     line-height: 1;
-    color: var(--neon-yellow);
+    color:var(--accent);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent; /* убираем синий флэш */
   }
@@ -855,7 +855,7 @@
     z-index: 1500;
   }
   .mobile-menu a {
-    color: var(--neon-yellow);
+    color:var(--accent);
     padding: .3rem 2rem;
     font-size: 1.1rem;
     text-decoration: none;
@@ -879,6 +879,9 @@
     }
     .tabs {
       display: none;              /* hide classic tabs */
+    }
+    .topnav {
+      display: none;
     }
   }
 

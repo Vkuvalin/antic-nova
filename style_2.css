@@ -75,7 +75,12 @@
     }
     .topnav a:hover{color:var(--text); border-color:var(--line); background:rgba(255,255,255,.03)}
     .topnav a.active{color:var(--accent); border-color:rgba(200,168,107,.25); background:rgba(200,168,107,.08)}
-    .burger{display:none}
+    /* .burger{display:none} */
+
+    @media(max-width:768px){
+      .topnav {display: none;}
+      .brand-name{font-size: 1.6rem;}
+    }
 
     /* ---------- ФОН ДЛЯ ДРУГИХ СТРАНИЦ ---------- */
     .container-description {
@@ -154,6 +159,7 @@
     @media (max-width: 768px){ 
       .cards{grid-column: 1 / -1; display:grid; gap:var(--gap); grid-template-columns: repeat(auto-fit, minmax(0.01fr, 1fr));}
       .grid{ transform: translateX(-15%);}
+      /* .card{ margin-left: 0px; margin-right: 0px; } */
     }
     /* @media (min-width: 768px){ .cards{grid-column: 1 / -1; display:grid; gap:var(--gap); grid-template-columns: repeat(auto-fit, minmax(0.01fr, 1fr));} } */
 
@@ -197,4 +203,4 @@
     
     /* ---------- Микро-усилители ---------- */
     .muted{color:var(--muted)}
-    .chip{display:inline-block; padding:4px 8px; border-radius: 10px; background: rgba(255,255,255,.04); border:1px solid var(--line); color:var(--muted); font-size:12px}
+    .chip{display:inline-block; padding:4px 8px; border-radius: 10px; background: rgba(255,255,255,.04); border:1px solid var(--line); color:var(--muted); font-size:12px;}
