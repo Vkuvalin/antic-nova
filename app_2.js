@@ -164,7 +164,7 @@
     }
 
     function updateCount(){
-      $('#countInfo').textContent = `${filtered.length} лотов`;
+      $('#countInfo').textContent = `${filtered.length} шт`;
     }
     // ####################################
 

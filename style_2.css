@@ -166,8 +166,11 @@
 
       .section-head-vv1{display:flex; flex-direction: column; margin-left: 0; margin-right: 0; height: auto; transform: translateX(-12%);}
       .section-head-dop-vv1{width: 100%; height: auto; margin-left: 0; margin-right: 0;}
+      
+      
       /* .container-description-vv1{transform: translateX(-7%); } */
       
+      .load-more{transform: translateX(-7%);}
     }
 
     /* ---------- Карточка лота ---------- */
@@ -209,6 +212,7 @@
     @media (max-width: 460px){
       .card{transform: scale(1.2); margin-top: 20px; margin-bottom: 50px;}
       .grid{transform: translateX(-15%);}
+      .load-more{transform: translateX(-15%);}
     }
 
     
