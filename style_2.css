@@ -111,6 +111,12 @@
 
 
 
+    #catList { display: flex; flex-direction: column; }
+    #catList li { order: 0; }
+    #catList li:has(> .catbtn.active) { order: -1; } /* активный li всегда сверху */
+
+
+
     /* ---------- Галерея ---------- */
     .main{
       min-height: 60vh;
