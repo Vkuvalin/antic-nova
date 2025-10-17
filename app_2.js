@@ -154,7 +154,7 @@
         if (c.key === key){
           
           if (key === 'all'){
-            $('#nameCat').textContent = `Галерея лотов • Все`;
+            $('#nameCat').textContent = `Галерея лотов`;
           }else {
             $('#nameCat').textContent = `${c.label}`;
           }

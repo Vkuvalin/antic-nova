@@ -34,8 +34,13 @@
 
     /* ---------- Сброс/база ---------- */
     *{box-sizing:border-box}
-    html,body{height:100%}
+    html,body{
+      overflow-x: hidden;
+      overflow-y: auto;
+      height:100%;
+    }
     body{
+      margin: 0;
       -webkit-tap-highlight-color: transparent;
       margin:0; background:var(--bg); color:var(--text);
       font: 500 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
@@ -95,7 +100,6 @@
       margin: 20px auto; padding: 0 16px 40px; height: 100%;
     }
 
-
     
     /* ---------- Сайдбар категорий ---------- */
     .sidebar{position: sticky; top:76px; height: calc(100dvh - 96px); z-index: 9;}
@@ -129,7 +133,6 @@
       height: 76px;          /* твой «закрытый» размер */
       -webkit-tap-highlight-color: transparent;
     }
-    /* .sidebar.no-hover .sidewrap { pointer-events: none; } */
 
 
 
@@ -139,7 +142,7 @@
       min-height: 60vh;
       width: 100%;
     }
-    .section-head{display:flex; align-items:end; justify-content:space-between; gap:12px; margin-bottom: 12px; width: 100%;}
+    .section-head{display:flex; align-items:start; justify-content:space-between; gap:12px; margin-bottom: 12px; width: 100%;}
     .section-head-dop{display:flex; align-items:start; height: 100%; justify-content:space-between; gap:12px; width: 30%; margin-left: -80px; margin-right: 20px;}
     .section-head-sub{display:flex; align-items:end; justify-content:space-between; gap:12px; margin-bottom: 12px}
     .section-title{font-size:25px; font-weight:800; letter-spacing:.3px; color:var(--accent);}
@@ -158,10 +161,14 @@
     }
     @media (max-width: 768px){ 
       .cards{grid-column: 1 / -1; display:grid; gap:var(--gap); grid-template-columns: repeat(auto-fit, minmax(0.01fr, 1fr));}
-      .grid{ transform: translateX(-15%);}
-      /* .card{ margin-left: 0px; margin-right: 0px; } */
+      .grid{transform: translateX(-7%);}
+      /* .grid{transform: translateX(-15%);} */
+
+      .section-head-vv1{display:flex; flex-direction: column; margin-left: 0; margin-right: 0; height: auto; transform: translateX(-12%);}
+      .section-head-dop-vv1{width: 100%; height: auto; margin-left: 0; margin-right: 0;}
+      /* .container-description-vv1{transform: translateX(-7%); } */
+      
     }
-    /* @media (min-width: 768px){ .cards{grid-column: 1 / -1; display:grid; gap:var(--gap); grid-template-columns: repeat(auto-fit, minmax(0.01fr, 1fr));} } */
 
     /* ---------- Карточка лота ---------- */
     .card{
@@ -199,6 +206,10 @@
     .btn[disabled]{opacity:.5; cursor:not-allowed}
     .span-correct{text-align: center; margin-bottom: 2px;}
 
+    @media (max-width: 460px){
+      .card{transform: scale(1.2); margin-top: 20px; margin-bottom: 50px;}
+      .grid{transform: translateX(-15%);}
+    }
 
     
     /* ---------- Микро-усилители ---------- */
