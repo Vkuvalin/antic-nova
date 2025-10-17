@@ -116,10 +116,14 @@
           btn.classList.add('active');
           const key = btn.getAttribute('data-cat');
           applyFilter(key);
-          
+
           document.querySelector('.sidebar')?.classList.add('no-hover');
           setTimeout(() => document.querySelector('.sidebar')?.classList.remove('no-hover'), 320);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          // window.scrollTo({ top: 0, behavior: 'smooth' });
+          document.querySelector('.sidewrap')?.scrollTo({ top: 0, behavior: 'smooth' });
+          window.scrollTo(0, 0);
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
         });
       });
     }
