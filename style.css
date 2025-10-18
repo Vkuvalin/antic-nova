@@ -182,6 +182,7 @@
     .section.active {
       display: grid;
       height: 100%;
+      width: 100%;
     }
 
     /* .section.active.page.sidebar {
@@ -400,7 +401,8 @@
 
 
 .article-text h1 {
-  content: "◉";
+  /* content: "◉"; */
+  font-size: 26px;
   color:var(--accent);
 }
 
