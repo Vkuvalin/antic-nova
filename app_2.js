@@ -66,11 +66,122 @@
 ];
     // ####################################
 
+    // ====== Директории и форматы ======
+    const CATEGORY_DIRS   = ['assets/categories', 'assets/catigories']; // алиас поддержан
+    const IMG_EXTS        = ['webp','avif','png','jpg','jpeg'];
+    const MAX_IMAGES_PER_LOT = 3;     // сколько фото берём в карточку
+    const MAX_PROBE_IMAGES   = 12;    // до какого номера проверять (1..12)
+    const MAX_LOT_SCAN       = 200;   // максимум "статей" на категорию при авто-скане
+    const MISS_STREAK_STOP   = 5;     // останов после 5 подряд промахов при скане <cat>_<n>
+    // ####################################
 
-    // ####################################    
 
-    // <link rel="icon" href="assets/icon_site_3.png" type="image/png"> + текстовое название в .txt
+    // Конфиг и утилиты
+    // ####################################
+    const qs  = (s, r=document) => r.querySelector(s);
+    const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+    const joinUrl = (...parts)=>parts.map(p=>String(p).replace(/(^\/|\/$)/g,'')).join('/');
+
+    // HEAD + Image fallback (на статике часто нет листинга, поэтому так проверяем существование)
+    async function fileExists(url){
+      try { const r = await fetch(url, { method:'HEAD', cache:'no-store' }); if (r.ok) return true; } catch(_){}
+      try {
+        await new Promise((res,rej)=>{
+          const im = new Image();
+          im.onload = ()=>res(true);
+          im.onerror= ()=>rej(false);
+          im.src = url + (url.includes('?')?'&':'?') + 'v=' + Date.now();
+        });
+        return true;
+      } catch(_){}
+      return false;
+    }
+    // ####################################
+
+
+
+
+    // Поиск картинок внутри лота
+    // ####################################
+    async function pickLotImages(catKey, lotSlug, want = MAX_IMAGES_PER_LOT){
+      const out = [];
+      for (const base of CATEGORY_DIRS){
+        const lotBase = joinUrl(base, encodeURIComponent(catKey), encodeURIComponent(lotSlug));
+
+        // 1..MAX_PROBE_IMAGES — сначала чисто цифры: 1.*, 2.*, ...
+        for (let i=1; i<=MAX_PROBE_IMAGES && out.length<want; i++){
+          for (const ext of IMG_EXTS){
+            const url = joinUrl(lotBase, `${i}.${ext}`);
+            if (await fileExists(url)){ out.push(url); break; }
+          }
+        }
+
+        // миграционный вариант: icon_1.*, icon_2.*, ...
+        if (out.length < want){
+          for (let i=1; i<=MAX_PROBE_IMAGES && out.length<want; i++){
+            for (const ext of IMG_EXTS){
+              const url = joinUrl(lotBase, `icon_${i}.${ext}`);
+              if (await fileExists(url)){ out.push(url); break; }
+            }
+          }
+        }
+
+        if (out.length) break;
+      }
+      if (!out.length) out.push(ph(800,600,'Фото'));
+      return out.slice(0, want);
+    }
+    // ####################################
+
+
+
+    // Авто-поиск лотов без (паттерн <category>_<n>)
+    // ####################################
+    async function discoverLotsSequential(catKey){
+      const found = [];
+      let miss = 0;
+
+      for (let n=1; n<=MAX_LOT_SCAN; n++){
+        const slug = `${catKey}_${n}`;
+        let exists = false;
+
+        // Пытаемся найти хотя бы первую картинку — 1.* или icon_1.*
+        for (const base of CATEGORY_DIRS){
+          for (const ext of IMG_EXTS){
+            const a = joinUrl(base, encodeURIComponent(catKey), slug, `1.${ext}`);
+            const b = joinUrl(base, encodeURIComponent(catKey), slug, `icon_1.${ext}`);
+            if (await fileExists(a) || await fileExists(b)){ exists = true; break; }
+          }
+          if (exists) break;
+        }
+
+        if (exists){
+          found.push({ slug });
+          miss = 0;             // сбрасываем серию промахов, скан продолжаем
+        } else {
+          miss++;
+          if (miss >= MISS_STREAK_STOP) break; // остановка после серии пустых
+        }
+      }
+
+      return found;
+    }
+    // ####################################
+
+
+    // ####################################
+    // ####################################
+
+
+    // ####################################
+    // ####################################
+
+
+
+    // ####################################
     // Демо-данные (замените на реальные лоты)
+    // ####################################
     const lots = Array.from({length: 16}).map((_, i) => ({
       id: i+1,
       title: `Лот #${i+1} — Пример наименование` ,
@@ -84,6 +195,7 @@
     }));
     // ####################################
 
+
     // ####################################
     // Состояние
     let filtered = [...lots];
@@ -91,6 +203,9 @@
     let key_name = 0;
     let counterHover = 0;
     const PAGE_SIZE = 12;
+
+    // Глобальный счётчик версий загрузки (для отмены устаревших потоков)
+    let loadSeq = 0;
     // ####################################
 
 
@@ -128,12 +243,9 @@
             }else{
               document.querySelector('.sidebar')?.classList.add('no-hover');
               counterHover = 0;
-              // setTimeout(() => document.querySelector('.sidebar')?.classList.remove('no-hover'), 1000);
             }
           }
 
-          
-          // window.scrollTo({ top: 0, behavior: 'smooth' });
           document.querySelector('.sidewrap')?.scrollTo({ top: 0, behavior: 'smooth' });
           window.scrollTo(0, 0);
           document.documentElement.scrollTop = 0;
@@ -141,83 +253,172 @@
         });
       });
     }
-
-    function applyFilter(key){
-      filtered = key==='all' ? [...lots] : lots.filter(l => l.category === key);
-      page = 0;
-      key_name = key
-      $('#cards').innerHTML = '';
-      updateCount();
-      renderNext();
-
-      categories.forEach((c, idx) =>{
-        if (c.key === key){
-          
-          if (key === 'all'){
-            $('#nameCat').textContent = `Галерея лотов`;
-          }else {
-            $('#nameCat').textContent = `${c.label}`;
-          }
-
-        }
-      })
-    }
-
-    function updateCount(){
-      $('#countInfo').textContent = `${filtered.length} шт`;
-    }
     // ####################################
-
     
+
+
+
+
     // ####################################
-    // Рендер пачки карточек
-    function renderNext(){
-      const from = page * PAGE_SIZE;
-      const to = Math.min(from + PAGE_SIZE, filtered.length);
-      const slice = filtered.slice(from, to);
-      const wrap = $('#cards');
+    // Сборка карточки и вывод
+    async function buildLotFromAssets(catKey, lotEntry){
+    const images = await pickLotImages(catKey, lotEntry.slug, MAX_IMAGES_PER_LOT);
+    return {
+      id: `${catKey}/${lotEntry.slug}`,
+      title: lotEntry.title || lotEntry.slug.replace(/[_-]+/g,' ').replace(/\b\w/g,m=>m.toUpperCase()),
+      category: catKey,
+      url: lotEntry.url || '#',     // позже подставим ссылку на Meshok из meta
+      images
+    };
+  }
 
-      slice.forEach(lot => wrap.appendChild(cardEl(lot)));
+  async function applyFilter(key){
+    const wrap = qs('#cards');
+    const mySeq = ++loadSeq;          // фиксируем версию этой загрузки
+    wrap.innerHTML = '';
+    qs('#countInfo').textContent = 'Загрузка...';
 
-      page++;
-      const more = $('#loadMore');
-      if(page * PAGE_SIZE >= filtered.length){
-        more.setAttribute('disabled', '');
-      } else {
-        more.removeAttribute('disabled');
+
+    // локальный набор уже вставленных id → защита от дублей
+    const seen = new Set();
+    const safeAppend = (lot) => {
+    if (mySeq !== loadSeq) return; // устаревший поток — выходим тихо
+      const uid = lot.id || `${lot.category}/${lot.title}`;
+    if (seen.has(uid)) return;
+      seen.add(uid);
+      wrap.appendChild(cardEl(lot));
+      qs('#countInfo').textContent = `${wrap.children.length} шт`;
+    };
+
+
+
+  if (key === 'all'){
+    const perCat = 5; // ВРЕМЕННЫЙ ЛИМИТ
+    const cats = categories.filter(c => c.key !== 'all');
+    for (const c of cats){
+      const discovered = await discoverLotsSequential(c.key);
+      const slice = discovered.slice(0, perCat);
+      for (const e of slice){
+        const lot = await buildLotFromAssets(c.key, e);
+        safeAppend(lot);
       }
     }
-    // ####################################
+    return;
+  }
+
+  // одна категория
+  const lotEntries = await discoverLotsSequential(key);
+  for (const e of lotEntries){
+    const lot = await buildLotFromAssets(key, e);
+    safeAppend(lot);
+  }
+}
+
+function updateCount(){
+  if (qs('#countInfo').textContent === 'Загрузка...'){
+    qs('#countInfo').textContent = `Что-то не так`;
+  }
+}
+// ####################################
 
 
+
+
+
+
+
+
+/* ################# Старый applyFilter
+    // function applyFilter(key){
+    //   filtered = key==='all' ? [...lots] : lots.filter(l => l.category === key);
+    //   page = 0;
+    //   key_name = key
+    //   $('#cards').innerHTML = '';
+    //   updateCount();
+    //   renderNext();
+
+    //   categories.forEach((c, idx) =>{
+    //     if (c.key === key){
+          
+    //       if (key === 'all'){
+    //         $('#nameCat').textContent = `Галерея лотов`;
+    //       }else {
+    //         $('#nameCat').textContent = `${c.label}`;
+    //       }
+
+    //     }
+    //   })
+    // }
+
     // ####################################
-    function cardEl(lot){
-      const el = document.createElement('article');
-      el.className = 'card';
-      el.innerHTML = `
-        <div class="photos">
-          <div class="mainimg"> <img loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[0]||ph(800,600,'Фото'))}"> </div>
-          <div class="thumbs">
-            <div class="thumb"> <img loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[1]||lot.images[0]||ph(400,400,'Фото'))}"> </div>
-            <div class="thumb"> <img loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[2]||lot.images[0]||ph(400,400,'Фото'))}"> </div>
-          </div>
+*/
+
+/* ############# Рендер пачки карточек
+    // Рендер пачки карточек
+    // function renderNext(){
+    //   const from = page * PAGE_SIZE;
+    //   const to = Math.min(from + PAGE_SIZE, filtered.length);
+    //   const slice = filtered.slice(from, to);
+    //   const wrap = $('#cards');
+
+    //   slice.forEach(lot => wrap.appendChild(cardEl(lot)));
+
+    //   page++;
+    //   const more = $('#loadMore');
+    //   if(page * PAGE_SIZE >= filtered.length){
+    //     more.setAttribute('disabled', '');
+    //   } else {
+    //     more.removeAttribute('disabled');
+    //   }
+    // }
+    // ####################################
+*/
+
+
+
+
+
+
+
+  // ####################################
+  function cardEl(lot){
+    const el = document.createElement('article');
+    el.className = 'card';
+    el.innerHTML = `
+      <div class="photos">
+        <div class="mainimg"> <img loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[0]||ph(800,600,'Фото'))}"> </div>
+        <div class="thumbs">
+          <div class="thumb"> <img loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[1]||lot.images[0]||ph(400,400,'Фото'))}"> </div>
+          <div class="thumb"> <img loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[2]||lot.images[0]||ph(400,400,'Фото'))}"> </div>
         </div>
-        <div class="card-body">
-          <h3 class="title">${lot.title}</h3>
-          <div class="meta">Категория: <span class="muted">${lot.category}</span></div>
-          <a class="more" href="${lot.url}" target="_blank" rel="noopener">
-            <span class="span-correct">Подробнее</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-          </a>
-        </div>`;
-      return el;
-    }
-    // ####################################
+      </div>
+      <div class="card-body">
+        <h3 class="title">${lot.title}</h3>
+        <div class="meta">Категория: <span class="muted">${lot.category}</span></div>
+        <a class="more" href="${lot.url}" target="_blank" rel="noopener">
+          <span class="span-correct">Подробнее</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>`;
+    return el;
+  }
+  // ####################################
+
+
+
+
+
+
 
 
     // Инициализация
+    // renderCategories();
+    // updateCount();
+    // renderNext();
+    // qs('#loadMore')?.addEventListener('click', renderNext);
+
+    // Инициализация (только новый поток)
     renderCategories();
-    updateCount();
-    renderNext();
-    $('#loadMore').addEventListener('click', renderNext);
+    applyFilter('all'); // можно поставить нужную категорию по умолчанию
+    setTimeout(() => document.querySelector('.sidebar')?.classList.remove('no-hover'), 10000);
 // ##########################################################################
