@@ -68,12 +68,12 @@
     .logo{width:36px; height:36px; border-radius:12px; background:linear-gradient(160deg, var(--card), var(--card-2)); 
       display:grid; place-items:center; box-shadow:inset 0 0 0 1px var(--line)
     }
-    /* .logo span{font-weight:800; color:var(--accent); font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif} */
+
     .brand-name{font-weight:800; letter-spacing:1px; font-size: 1.8rem; color: #e7ba65;
       text-shadow: -2px -1px 0.2px #6b4d1452, 3px 0 0.2px #c487163c, 0 2px 0.7px #9b7f4a3e, -3px 0 0.2px #c487163c, 0 -2px 0.7px #9b7f4a3e, 2px 1px 0.2px #6b4d1452; 
       font-family:'Times New Roman', Times, sans-serif; font-size: 1.9rem;
     }
-      /* color: var(--neon-yellow); text-shadow: 0 0 2px var(--neon-yellow), 0 0 6px #ff0; */
+
     .topnav{display:flex; align-items:center; gap:8px}
     .topnav a{
       padding:8px 12px; border-radius:12px; color:var(--muted);
@@ -81,7 +81,7 @@
     }
     .topnav a:hover{color:var(--text); border-color:var(--line); background:rgba(255,255,255,.03)}
     .topnav a.active{color:var(--accent); border-color:rgba(200,168,107,.25); background:rgba(200,168,107,.08)}
-    /* .burger{display:none} */
+
 
     @media(max-width:768px){
       .topnav {display: none;}
@@ -130,8 +130,8 @@
     /* временно блокируем раскрытие по hover */
     .sidebar.no-hover .sidewrap,
     .sidebar.no-hover:hover .sidewrap {
-      width: 76px;           /* твой «закрытый» размер */
-      height: 76px;          /* твой «закрытый» размер */
+      width: 76px;
+      height: 76px;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -166,10 +166,9 @@
       .grid{transform: translateX(-7%);}
       .card:hover{transform: translateY(-2px);}
 
-      /* .section-head-vv1{display:flex; flex-direction: column; margin-left: 10px; margin-right: 0; height: auto; transform: translateX(-15%);} */
       .section-head-vv1{display:flex; flex-direction: column; margin-left: 10px; margin-right: 0; height: auto; transform: translateX(-4%);}
       .section-head-dop-vv1{width: 100%; height: auto; margin-left: 0; margin-right: 0;}
-      .load-more{transform: translateX(-7%);}
+      .load-more{transform: translateX(-15%);}
 
       .page-dop {grid-template-columns: 1px 1fr;}
       .container-description {padding: 4px 8px;}
@@ -201,7 +200,7 @@
     .more:hover{background: rgba(200,168,107,.12); border-color: rgba(200,168,107,.6)}
     .more svg{width:16px; height:16px; stroke: currentColor}
 
-    .load-more{display:grid; place-items:center; margin: 22px 0 8px; -webkit-tap-highlight-color: transparent;}
+    .load-more{display:grid; place-items:center; margin: 22px 0 8px; -webkit-tap-highlight-color: transparent; transform: translateX(-3%);}
     .btn{
       display:inline-flex; align-items:center; gap:8px; padding:10px 14px;
       border-radius:12px; border:1px solid var(--line); background: var(--panel); color: var(--text);
@@ -213,7 +212,6 @@
 
     @media (max-width: 460px){
       .grid{transform: translateX(-17%);}
-      /* .section-head-vv1{transform: translateX(-25%);} */
       .card{transform: scale(1.2); margin-top: 20px; margin-bottom: 50px;}
       .load-more{transform: translateX(-15%);}
       .card:hover{transform: scale(1.21);}
@@ -222,4 +220,5 @@
     
     /* ---------- Микро-усилители ---------- */
     .muted{color:var(--muted)}
-    .chip{display:inline-block; padding:4px 8px; border-radius: 10px; background: rgba(255,255,255,.04); border:1px solid var(--line); color:var(--muted); font-size:12px;}
+    .chip{display:block; padding:4px 8px; border-radius: 10px; background: rgba(255,255,255,.04); border:1px solid var(--line); color:var(--muted); font-size:12px; transform: translateX(-100%);}
+    @media (max-width: 460px) { .chip{transform: translateX(0%);} }

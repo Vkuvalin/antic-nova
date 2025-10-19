@@ -30,89 +30,20 @@
   });
 
 // ############################################################################################# ТОП БАР
-// ############################### ТОП БАР И СКРОЛЛ
-window.addEventListener('load', () => {
-  const topbar = document.querySelector('.topbar');
-  let lastScrollY = window.scrollY;
-  let ticking = false;
-
-  window.addEventListener('scroll', (e) => {
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        const currentY = window.scrollY;
-
-        if (currentY > lastScrollY && currentY > 50) {
-          topbar.classList.add('topbar--hidden');
-        } else {
-          topbar.classList.remove('topbar--hidden');
-        }
-
-        lastScrollY = currentY;
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, { passive: true });
-});
-// ###############################
 
 
 
 // ############################### Обработчик навигации (tabs)
-// 1) Получаем все табы и контент-секции
-const tabs = document.querySelectorAll('.tab');
-const tabContents = document.querySelectorAll('.tab-content');
+const tabs = document.querySelectorAll('.tab');                       // 1) Получаем все табы и контент-секции
 
 // 2) Общий обработчик клика
 function onTabClick(event) {
   const targetTab = event.currentTarget;
-  const targetId  = targetTab.dataset.target;  // например data-target="guide"
-
-  // 2.1) Деактивируем все табы и контенты
-  tabs.forEach(tab => tab.classList.remove('active'));
-  tabContents.forEach(content => content.classList.remove('active'));
-
-  // 2.2) Активируем кликнутый таб и соответствующий контент
-  targetTab.classList.add('active');
-  document.getElementById(targetId).classList.add('active');
+  tabs.forEach(tab => tab.classList.remove('active'));                // 2.1) Деактивируем все табы и контенты
+  targetTab.classList.add('active');                                  // 2.2) Активируем кликнутый таб и соответствующий контент
 }
-
-// 3) Навешиваем один раз
-tabs.forEach(tab => {
-  tab.addEventListener('click', onTabClick);
-});
+tabs.forEach(tab => { tab.addEventListener('click', onTabClick); });  // 3) Навешиваем один раз
 // ###############################
-
-
-
-// ############################### ВНУТРЕННИЕ ПЕРЕХОДЫ
-    // 🔹 Переходы по data-tab
-    const cards = document.querySelectorAll(".gpt-card");
-
-    cards.forEach(card => {
-      card.addEventListener("click", () => {
-		const link = card.getAttribute("data-link");
-		if (link) {
-			window.open(link, "_blank");
-		return;
-		}
-		
-        const targetTab = card.getAttribute("data-tab");
-		
-    // ⬇ Добавим в историю
-        history.pushState({ tab: targetTab }, "", `#${targetTab}`);
-        showSection(targetTab);
-		
-      });
-    });
-
-    // 🔹 Открываем диалог = фотку в "Инструкции"
-    function openDialog() {
-    	const dialog = document.getElementById('archDialog');
-    	if (dialog) dialog.showModal();
-    }
-// ###############################
-
 
 
 // ############################### НАВИГАЦИЯ
@@ -221,7 +152,6 @@ function createPulseCircle() {
 // ###############################
 
 
-
 // ############################### Функция создания анимированной линии
 function createAnimatedLine() {
   const colors = [
@@ -263,7 +193,6 @@ function createAnimatedLine() {
 //  ###############################
 
 
-
 // ############################### Генераторы через requestAnimationFrame
 function startCircleGenerator() {
   let lastTs = 0;
@@ -301,32 +230,9 @@ function startLineGenerator() {
 }
 // ###############################
 
-// ############################### Подключение анимаций каточек
 
-document.addEventListener('DOMContentLoaded', () => {
-  // выберем все 3 варианта карт
-  const cards = document.querySelectorAll(
-    '.gpt-card, .gpt-card-low-color, .gpt-card-low-color2'
-  );
+// ############################### Подключение анимаций Кружки/Линии в зависимости от интернета
 
-  // создаём наблюдатель
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      // добавляем/убираем класс .is-visible
-      entry.target.classList.toggle('is-visible', entry.isIntersecting);
-    });
-  }, {
-    threshold: 0.1 // срабатывает, когда 10% карточки видно
-  });
-
-  // подписываем на наблюдение
-  cards.forEach(card => observer.observe(card));
-});
-// ###############################
-
-
-
-// ############################### Подключение анимаций Кружки/Линии
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Читаем информацию о соединении
   const conn      = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -335,96 +241,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveData  = conn?.saveData || false;  // true, если включён Data Saver
 
   // 2. Вычисляем флаг «быстрой» сети
-  const isFastNetwork = (
-    type === 'wifi' ||
-    (effective === '4g' && !saveData)
-  );
+  const isFastNetwork = (type === 'wifi' || (effective === '4g' && !saveData));
 
   if (isFastNetwork) {
     startCircleGenerator();
     startLineGenerator();
   } else {
-    // ─── Экономный режим ───────────────────────────────────────────
-    // здесь можно подгрузить лёгкие изображения
-    // и вовсе не вызывать startCircleGenerator/startLineGenerator
+    // Экономный режим. Можно настроить. Пока не актуально.
   }
 });
+
 // ###############################
 //  #############################################################################################
-
-	
-// ############################################################################################# rotating-description
-// ###############################
-// Глобальная переменная за пределами функции:
-let lastPhrase = null;
-
-function changeDescription() {
-  // 1) Берём все фразы, без какой-либо фильтрации
-  const phrases = Array.from(document.querySelectorAll("#phrase-list > div"));
-  if (phrases.length === 0) return;
-
-  // 2) Исключаем предыдущую фразу, если вариантов больше одного
-  const candidates = lastPhrase && phrases.length > 1
-    ? phrases.filter(el => el !== lastPhrase)
-    : phrases;
-
-  // 3) Выбираем случайную фразу и запоминаем её
-  const random = candidates[Math.floor(Math.random() * candidates.length)];
-  lastPhrase = random;
-
-  // 4) Находим элементы для вывода
-  const p1 = document.querySelector("#rotating-description .phrase-1");
-  const p2 = document.querySelector("#rotating-description .phrase-2");
-  const p3 = document.querySelector("#rotating-description .phrase-3");
-  const p4 = document.querySelector("#rotating-description .phrase-4");
-  if (!p1 || !p2 || !p3 || !p4) return;
-
-  // 5) Сбрасываем старые анимации
-  [p1, p2, p3, p4].forEach(el => {
-    el.style.visibility = "visible";
-    el.classList.remove(
-      "fade-in", "fade-out",
-      "slide-in-left", "slide-in-right",
-      "slide-out-left", "slide-out-right"
-    );
-  });
-
-  // 6) Анимируем «выезд» старого текста
-  const useSlide = Math.random() < 0.5;
-  const out1 = useSlide ? "slide-out-left"  : "fade-out";
-  const out2 = useSlide ? "slide-out-right" : "fade-out";
-  p1.classList.add(out1);
-  p2.classList.add(out1);
-  p3.classList.add(out2);
-  p4.classList.add(out2);
-
-  // 7) Через 400 мс меняем текст и анимируем «въезд»
-  setTimeout(() => {
-    p1.textContent = random.dataset.p1 || "";
-    p2.textContent = random.dataset.p2 || "";
-    p3.textContent = random.dataset.p3 || "";
-    p4.textContent = random.dataset.p4 || "";
-
-    [p1, p2, p3, p4].forEach(el => el.classList.remove(out1, out2));
-
-    const in1 = useSlide ? "slide-in-left"  : "fade-in";
-    const in2 = useSlide ? "slide-in-right" : "fade-in";
-    p1.classList.add(in1);
-    p2.classList.add(in2);
-    p3.classList.add(in1);
-    p4.classList.add(in2);
-  }, 400);
-}
-
-// Инициализация
-document.addEventListener("DOMContentLoaded", () => {
-  changeDescription();
-  setInterval(changeDescription, 30000);
-
-  // При клике на «Главная» — заново подгружаем описание
-  document.querySelectorAll('.tab[data-tab="home"]').forEach(tab => {
-    tab.addEventListener("click", changeDescription);
-  });
-});
-// ###############################
-// ##########################################################################
