@@ -244,8 +244,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const isFastNetwork = (type === 'wifi' || (effective === '4g' && !saveData));
 
   if (isFastNetwork) {
-    startCircleGenerator();
-    startLineGenerator();
+    setTimeout(() => {
+      startCircleGenerator();
+      startLineGenerator();
+    }, 5000);
   } else {
     // Экономный режим. Можно настроить. Пока не актуально.
   }
