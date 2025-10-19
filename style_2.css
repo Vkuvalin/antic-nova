@@ -75,10 +75,7 @@
     }
 
     .topnav{display:flex; align-items:center; gap:8px}
-    .topnav a{
-      padding:8px 12px; border-radius:12px; color:var(--muted);
-      transition:.2s ease; border:1px solid transparent;
-    }
+    .topnav a{ padding:8px 12px; border-radius:12px; color:var(--muted); transition:.2s ease; border:1px solid transparent; }
     .topnav a:hover{color:var(--text); border-color:var(--line); background:rgba(255,255,255,.03)}
     .topnav a.active{color:var(--accent); border-color:rgba(200,168,107,.25); background:rgba(200,168,107,.08)}
 
@@ -104,7 +101,12 @@
     
     /* ---------- Сайдбар категорий ---------- */
     .sidebar{position: sticky; top:76px; height: calc(100dvh - 96px); z-index: 9;}
-    .sidewrap{position: absolute; width:76px; height: 76px; transition: width .25s ease; background:var(--panel); overflow: auto; border:1px solid var(--line); border-radius: var(--radius-lg);  box-shadow: var(--shadow); -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;}
+    .sidewrap{
+      position: absolute; width:75px; height: 75px; transition: width .25s ease; 
+      background:var(--panel); overflow: auto; border:1px solid var(--line); 
+      border-radius: var(--radius-lg);  box-shadow: var(--shadow); -webkit-overflow-scrolling: touch; 
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
     .sidewrap:hover{width: 220px; height: calc(100dvh - 96px); }
     .sidewrap::-webkit-scrollbar{width: 0; height: 0;}
     .catlist{list-style:none; margin:0px; padding:0px}
@@ -130,8 +132,8 @@
     /* временно блокируем раскрытие по hover */
     .sidebar.no-hover .sidewrap,
     .sidebar.no-hover:hover .sidewrap {
-      width: 76px;
-      height: 76px;
+      width: 75px;
+      height: 75px;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -139,10 +141,7 @@
 
 
     /* ---------- Галерея ----------  */
-    .main{
-      min-height: 60vh;
-      width: 100%;
-    }
+    .main{min-height: 60vh; width: 100%;}
     .section-head{display:flex; align-items:start; justify-content:space-between; gap:12px; margin-bottom: 12px;}
     .section-head-dop{display:flex; align-items:start; height: 100%; justify-content:space-between; gap:12px; width: 30%; margin-left: -80px;}
     .section-head-sub{display:flex; align-items:end; justify-content:space-between; gap:12px; margin-bottom: 12px}
@@ -179,7 +178,6 @@
       position:relative; background: var(--card); border: 1px solid var(--line);
       border-radius: var(--radius); box-shadow: var(--shadow); overflow:hidden;
       transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-      content-visibility: auto; contain-intrinsic-size: 420px;
     }
     .card:hover{box-shadow: 6px 12px 26px rgba(0,0,0,.25); border-color: rgba(200,168,107,.35)}
 
@@ -261,7 +259,6 @@
 
 .lb-close{
   position: absolute; top: 8px; right: 8px;
-  /* width: 40px; height: 40px; */
   border: 0; border-radius: 10px;
   background: rgba(0,0,0,.35);
   color: var(--accent); font-size: 20px; line-height: 20px; cursor: pointer;
