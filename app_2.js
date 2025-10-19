@@ -6,6 +6,8 @@
     const joinUrl = (...parts)=>parts.map(p=>String(p).replace(/(^\/|\/$)/g,'')).join('/');
 
 
+
+    // #################################### (Проверка существования файла и выбор расширения)
     // HEAD + Image fallback (на статике часто нет листинга, поэтому так проверяем существование)
     async function fileExists(url){
       try { const r = await fetch(url, { method:'HEAD', cache:'no-store' }); if (r.ok) return true; } catch(_){}
@@ -21,6 +23,25 @@
       return false;
     }
 
+
+    // выбрать реальное расширение для base/fname (кэшируем)
+    async function pickExt(basePath, fileNameNoExt){
+      const key = `${basePath}/${fileNameNoExt}`;
+      if (imageExtCache.has(key)) return imageExtCache.get(key);
+      for (const ext of FALLBACK_EXTS){
+        const url = `${basePath}/${fileNameNoExt}.${ext}`;
+        if (await fileExists(url)) { imageExtCache.set(key, ext); return ext; }
+      }
+      imageExtCache.set(key, null);
+      return null;
+    }
+    // ####################################
+
+
+
+
+
+    // ####################################
     // Плейсхолдер изображений (inline SVG в data URI)
     const ph = (w, h, text) => {
       const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'>\
@@ -94,12 +115,44 @@
 
 
 
-    
+    // ####################################
     // ===== Параметры пагинации / сети =====
-    const PAGE_SIZE_DESKTOP = 12;
-    const PAGE_SIZE_MOBILE  = 8;
+    const PAGE_SIZE_DESKTOP = 8;
+    const PAGE_SIZE_MOBILE  = 4;
     const BATCH_K_ALL       = 2; // «Все»: по 2 лота с категории
     // ####################################
+
+
+    // ####################################
+    // ===== Fallback scan (когда нет index.json) =====
+    const SCAN_PARALLEL = 4;          // сколько номеров <n> проверяем одновременно
+    const SCAN_MAX_NUM  = 1000;       // верхняя «мягкая» граница n (чтобы не уйти в бесконечность)
+    const SCAN_MISSES_STOP = 5;       // остановка после 5 подряд промахов
+    const FALLBACK_EXTS = ['jpg','jpeg','png']; // ты используешь эти форматы
+
+    // кэш на сессию
+    const fallbackIndexCache = new Map();     // cat -> [{slug}]
+    const imageExtCache      = new Map();     // "<base>/<fname>" -> 'jpg'|'png'|... (чтобы лишний раз не пробовать все расширения)
+
+    // dev-лог (включить при отладке)
+    const DEV_FALLBACK_LOG = false;
+    const flog = (...a) => { if (DEV_FALLBACK_LOG) console.log('[fallback]', ...a); };
+    // ####################################
+
+//  #################################################################################################################################################################
+
+    // ####################################
+    // Есть ли у лота хоть одно фото (быстрая проверка «живой» папки)
+    async function lotHasAnyImage(catKey, slug){
+      const base = `assets/categories/${encodeURIComponent(catKey)}/${encodeURIComponent(slug)}`;
+      const ext1 = await pickExt(base, '1');   // 1.jpg|jpeg|png
+      if (ext1) return { base };
+      return null;
+    }
+    // ####################################
+
+
+
 
 
     // ####################################
@@ -210,6 +263,7 @@
       entries: [],          // нормализованные записи (single)
       page: 0,              // номер текущей страницы (single/all)
       pageSize: isMobile() ? PAGE_SIZE_MOBILE : PAGE_SIZE_DESKTOP,
+      fallback: false,   // single-режим: данные из сканера?
 
       // для режима 'all'
       allPacks: null,       // [{cat, version, entries, cursor}]
@@ -221,6 +275,7 @@
       galleryState.entries = [];
       galleryState.version = '';
       galleryState.allPacks = null;
+      galleryState.fallback = false;
     }
     // ####################################
 
@@ -246,7 +301,7 @@
         const to   = Math.min(from + galleryState.allLimit, p.entries.length);
         const slice = p.entries.slice(from, to);
         // корректный спред + расширение объекта
-        out.push(...slice.map(e => ({ ...e, _cat: p.cat, _version: p.version })));
+        out.push(...slice.map(e => ({ ...e, _cat: p.cat, _version: p.version, _fallback: !!p.fallback })));
         p.cursor = to; // сдвигаем курсор
       }
       const hasMore = packs.some(p => p.cursor < p.entries.length);
@@ -265,7 +320,6 @@
 
     // ####################################
     // Очень аккуратный префетч (только первые изображения следующей порции)
-
     function prefetchImages(urls, limit = networkLimit()) {
       const c = navigator.connection || {};
       if (c.saveData) return;              // экономия данных — не префетчим
@@ -291,10 +345,10 @@
 
     // ####################################
     // Рендер следующего батча (универсально для single/all)
-
     async function renderNextBatch(mySeq) {
       const wrap = qs('#cards');
       const seen = new Set(Array.from(wrap.children).map(n => n.dataset?.uid));
+
 
       // собрать порцию элементов
       let batch = [];
@@ -302,11 +356,17 @@
 
       if (galleryState.mode === 'single') {
         const entries = getSingleBatch();
-        batch = entries.map(e => lotFromEntry(galleryState.key, e, galleryState.version));
+        if (!galleryState.fallback) {
+          batch = entries.map(e => lotFromEntry(galleryState.key, e, galleryState.version));
+        } else {
+          batch = await Promise.all(entries.map(e => buildLotFromAssets(galleryState.key, e)));
+        }
         hasMore = hasMoreSingle();
       } else {
         const { items, hasMore: hm } = getAllBatch();
-        batch = items.map(e => lotFromEntry(e._cat, e, e._version));
+        batch = await Promise.all(items.map(e => (
+          e._fallback ? buildLotFromAssets(e._cat, e) : lotFromEntry(e._cat, e, e._version)
+        )));
         hasMore = hm;
       }
 
@@ -367,7 +427,6 @@
 
     // ####################################
     // Обработчик «Показать ещё» (добавить один раз)
-
     qs('#loadMore')?.addEventListener('click', () => {
       const mySeq = loadSeq;        // текущий поток
       if (galleryState.mode === 'single') {
@@ -381,46 +440,22 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 //  #################################################################################################################################################################
 
 
 
-    // Поиск картинок внутри лота
     // ####################################
+    // Поиск картинок внутри лота
     async function pickLotImages(catKey, lotSlug, want = MAX_IMAGES_PER_LOT){
       const out = [];
       for (const base of CATEGORY_DIRS){
         const lotBase = joinUrl(base, encodeURIComponent(catKey), encodeURIComponent(lotSlug));
-
-        // 1..MAX_PROBE_IMAGES — сначала чисто цифры: 1.*, 2.*, ...
         for (let i=1; i<=MAX_PROBE_IMAGES && out.length<want; i++){
-          for (const ext of IMG_EXTS){
+          for (const ext of IMG_EXTS){              // см. пункт 4: сузим IMG_EXTS
             const url = joinUrl(lotBase, `${i}.${ext}`);
             if (await fileExists(url)){ out.push(url); break; }
           }
         }
-
-        // миграционный вариант: icon_1.*, icon_2.*, ...
-        if (out.length < want){
-          for (let i=1; i<=MAX_PROBE_IMAGES && out.length<want; i++){
-            for (const ext of IMG_EXTS){
-              const url = joinUrl(lotBase, `icon_${i}.${ext}`);
-              if (await fileExists(url)){ out.push(url); break; }
-            }
-          }
-        }
-
         if (out.length) break;
       }
       if (!out.length) out.push(ph(800,600,'Фото'));
@@ -431,36 +466,42 @@
 
     
 
-
-    // Авто-поиск лотов без (паттерн <category>_<n>)
     // ####################################
+    // Авто-поиск лотов без (паттерн <category>_<n>)
     async function discoverLotsSequential(catKey){
-      const found = [];
-      let miss = 0;
-
-      for (let n=1; n<=MAX_LOT_SCAN; n++){
-        const slug = `${catKey}_${n}`;
-        let exists = false;
-
-        // Пытаемся найти хотя бы первую картинку — 1.* или icon_1.*
-        for (const base of CATEGORY_DIRS){
-          for (const ext of IMG_EXTS){
-            const a = joinUrl(base, encodeURIComponent(catKey), slug, `1.${ext}`);
-            const b = joinUrl(base, encodeURIComponent(catKey), slug, `icon_1.${ext}`);
-            if (await fileExists(a) || await fileExists(b)){ exists = true; break; }
-          }
-          if (exists) break;
-        }
-
-        if (exists){
-          found.push({ slug });
-          miss = 0;             // сбрасываем серию промахов, скан продолжаем
-        } else {
-          miss++;
-          if (miss >= MISS_STREAK_STOP) break; // остановка после серии пустых
-        }
+      if (fallbackIndexCache.has(catKey)) {
+        flog('cache hit', catKey);
+        return fallbackIndexCache.get(catKey);
       }
 
+      const found = [];
+      let missStreak = 0;
+      let n = 1;
+
+      while (n <= SCAN_MAX_NUM && missStreak < SCAN_MISSES_STOP) {
+        const batch = Array.from({length: SCAN_PARALLEL}, (_,i)=> n + i);
+        const results = await Promise.allSettled(
+          batch.map(async num => {
+            const slug = `${catKey}_${num}`;
+            const ok = await lotHasAnyImage(catKey, slug);
+            return ok ? { slug } : null;
+          })
+        );
+
+        for (const r of results){
+          if (r.status === 'fulfilled' && r.value) {
+            found.push(r.value);
+            missStreak = 0;           // сбрасываем серию промахов
+          } else {
+            missStreak++;
+          }
+        }
+
+        if (DEV_FALLBACK_LOG) flog('batch', { from: n, missStreak, found: found.length });
+        n += SCAN_PARALLEL;
+      }
+
+      fallbackIndexCache.set(catKey, found);
       return found;
     }
     // ####################################
@@ -515,28 +556,40 @@
         });
       });
     }
-
+    // ####################################
     
     // ####################################
     // Сборка карточки и вывод
     async function buildLotFromAssets(catKey, lotEntry){
-    const images = await pickLotImages(catKey, lotEntry.slug, MAX_IMAGES_PER_LOT);
-    return {
-      id: `${catKey}/${lotEntry.slug}`,
-      title: lotEntry.title || lotEntry.slug.replace(/[_-]+/g,' ').replace(/\b\w/g,m=>m.toUpperCase()),
-      category: catKey,
-      url: lotEntry.url || '#',     // позже подставим ссылку на Meshok из meta
-      images
-    };
-    }
+      const slug  = lotEntry.slug;
+      const base  = `assets/categories/${encodeURIComponent(catKey)}/${encodeURIComponent(slug)}`;
+      const images = [];
 
+      for (let i=1; i<=3; i++){
+        const ext = await pickExt(base, String(i));   // ищем 1.*, 2.*, 3.* среди FALLBACK_EXTS
+        if (ext) images.push(`${base}/${i}.${ext}`);
+      }
+
+      if (!images.length) images.push(ph(800,600,'Фото'));
+
+      return {
+        id: `${catKey}/${slug}`,
+        title: lotEntry.title || slug.replace(/[_-]+/g,' ').replace(/\b\w/g,m=>m.toUpperCase()),
+        category: catKey,
+        url: lotEntry.url || '#',
+        images
+      };
+    }
+    // ####################################
+
+
+    // ####################################
     async function applyFilter(key){
       const wrap = qs('#cards');
       const mySeq = ++loadSeq;          // фиксируем версию этой загрузки
       wrap.innerHTML = '';
       qs('#countInfo').textContent = 'Загрузка…';
       resetGalleryState();
-
 
 
       // режим и ключ
@@ -548,7 +601,6 @@
 
 
       if (galleryState.mode === 'single') {
-
         // SINGLE: манифест → entries → первая порция
         try {
           const mf = await loadManifest(key);
@@ -557,12 +609,12 @@
         } catch {
           // Fallback-скан (при отсутствии манифеста)
           const disc = await discoverLotsSequential(key);
-          galleryState.entries = disc.map(d => ({ slug: d.slug, files: ['1.jpg','2.jpg','3.jpg'] }));
-          galleryState.version = ''; // без версии
+          galleryState.entries = disc.map(d => ({ slug: d.slug }));  // БЕЗ files
+          galleryState.version = '';
+          galleryState.fallback = true;
         }
         galleryState.page = 0;
         renderNextBatch(mySeq);
-
       } else {
         // ALL: грузим манифесты/списки по всем категориям (параллельно)
         const cats = categories.filter(c => c.key !== 'all');
@@ -572,56 +624,15 @@
             return { cat: c.key, version: mf.version || '', entries: entriesFromManifest(c.key, mf), cursor: 0 };
           } catch {
             const disc = await discoverLotsSequential(c.key);
-            const entries = disc.map(d => ({ slug: d.slug, files: ['1.jpg','2.jpg','3.jpg'] }));
-            return { cat: c.key, version: '', entries, cursor: 0 };
+            const entries = disc.map(d => ({ slug: d.slug }));         // БЕЗ files
+            return { cat: c.key, version: '', entries, cursor: 0, fallback: true };
           }
         }));
         galleryState.allPacks = packs;
         galleryState.page = 0;
         renderNextBatch(mySeq);
       }
-
-
-
-
-      // // ----------------------------------------
-      // // локальный набор уже вставленных id → защита от дублей
-      // const seen = new Set();
-      // const safeAppend = (lot) => {
-      // if (mySeq !== loadSeq) return; // устаревший поток — выходим тихо
-      //   const uid = lot.id || `${lot.category}/${lot.title}`;
-      // if (seen.has(uid)) return;
-      //   seen.add(uid);
-      //   wrap.appendChild(cardEl(lot));
-      //   qs('#countInfo').textContent = `${wrap.children.length} шт`;
-      // };
-
-
-
-      // if (key === 'all'){
-      //   const perCat = 5; // ВРЕМЕННЫЙ ЛИМИТ
-      //   const cats = categories.filter(c => c.key !== 'all');
-      //   for (const c of cats){
-      //     const discovered = await discoverLotsSequential(c.key);
-      //     const slice = discovered.slice(0, perCat);
-      //     for (const e of slice){
-      //       const lot = await buildLotFromAssets(c.key, e);
-      //       safeAppend(lot);
-      //     }
-      //   }
-      //   return;
-      // }
-
-      // // одна категория
-      // const lotEntries = await discoverLotsSequential(key);
-      // for (const e of lotEntries){
-      //   const lot = await buildLotFromAssets(key, e);
-      //   safeAppend(lot);
-      // }
-      // // ----------------------------------------
-
     }
-
     // ####################################
 
 
@@ -650,8 +661,10 @@
     // ####################################
 
 
+// ####################################
 // Инициализация (только новый поток)
+
 renderCategories();
 applyFilter('all');
-setTimeout(() => qs('#countInfo').textContent = '0 шт', 5000);
+setTimeout(() => {if(qs('#countInfo').textContent == 'Загрузка…') { qs('#countInfo').textContent = '0 шт' }}, 5000);
 // ##########################################################################
