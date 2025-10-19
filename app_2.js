@@ -822,14 +822,16 @@
       el.className = 'card';
 
       // fetchpriority только для первых карточек страницы
-      const prio = (highPriorityLeft-- > 0) ? ' fetchpriority="high"' : '';
+      const eager = (highPriorityLeft-- > 0);
+      const prio  = eager ? ' fetchpriority="high"' : '';
+      const loadingAttr = eager ? 'eager' : 'lazy';
 
       el.innerHTML = `
         <div class="photos">
-          <div class="mainimg"> <img class="cover" loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[0]||ph(800,600,'Фото'))}"> </div>
+          <div class="mainimg"> <img class="cover" loading="${loadingAttr}" decoding="async" alt="${lot.title}" src="${(lot.images[0]||ph(800,600,'Фото'))}"> </div>
           <div class="thumbs">
-            <div class="thumb"> <img class="lazy-img" loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[1]||lot.images[0]||ph(400,400,'Фото'))}"> </div>
-            <div class="thumb"> <img class="lazy-img" loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[2]||lot.images[0]||ph(400,400,'Фото'))}"> </div>
+            <div class="thumb"> <img class="lazy-img" loading="${loadingAttr}" decoding="async" alt="${lot.title}" src="${(lot.images[1]||lot.images[0]||ph(400,400,'Фото'))}"> </div>
+            <div class="thumb"> <img class="lazy-img" loading="${loadingAttr}" decoding="async" alt="${lot.title}" src="${(lot.images[2]||lot.images[0]||ph(400,400,'Фото'))}"> </div>
           </div>
         </div>
         <div class="card-body">
@@ -855,7 +857,6 @@
 
       // подписываем ленивые изображения
       qsa('.lazy-img', el).forEach(img => thumbObserver.observe(img));
-
       return el;
     }
     // ####################################
