@@ -183,7 +183,7 @@
     .card:hover{box-shadow: 6px 12px 26px rgba(0,0,0,.25); border-color: rgba(200,168,107,.35)}
 
     .photos{display:grid; grid-template-columns: 2fr 1fr; gap:10px; padding:10px; background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0))}
-    .photos .mainimg{aspect-ratio: 4/3; border-radius:12px; overflow:hidden; background: var(--card-2); border:1px solid var(--line)}
+    .photos .mainimg{aspect-ratio: 4/4.1; border-radius:12px; overflow:hidden; background: var(--card-2); border:1px solid var(--line)}
     .photos .thumbs{display:grid; grid-template-rows: 1fr 1fr; gap:10px}
     .photos .thumb{aspect-ratio: 1/1; border-radius:12px; overflow:hidden; background: var(--card-2); border:1px solid var(--line)}
     .photos img{width:100%; height:100%; object-fit:cover}
@@ -222,3 +222,68 @@
     .muted{color:var(--muted)}
     .chip{display:block; padding:4px 8px; border-radius: 10px; background: rgba(255,255,255,.04); border:1px solid var(--line); color:var(--muted); font-size:12px; transform: translateX(-100%);}
     @media (max-width: 460px) { .chip{transform: translateX(0%);} }
+
+
+
+
+/* ---------- Модальное окно с каруселью ---------- 
+Цель: при клике по фото в карточке открывается диалог поверх страницы с просмотром 1/3 изображений, 
+стрелками «влево/вправо», кнопкой «закрыть», поддержкой клавиш (Esc/←/→) и свайпов на телефоне.
+*/
+
+
+/* ===== Lightbox (modal) ===== */
+.lb-lock { overflow: hidden; } /* блокируем скролл фона */
+
+.lightbox[hidden] { display: none !important; }
+.lightbox{ position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; font-family: inherit; }
+.lb-backdrop{ position: absolute; inset: 0; background: rgba(5,7,10,.6); backdrop-filter: blur(4px); }
+.lb-dialog{
+  position: relative;
+  width: min(96vw, 1100px);
+  max-height: 92vh;
+  background: var(--panel, #0f1217);
+  border: 1px solid var(--line, rgba(255,255,255,.08));
+  border-radius: 16px;
+  box-shadow: 0 20px 80px rgba(0,0,0,.55);
+  padding: 16px 56px; /* запас под стрелки */
+  display: grid; gap: 10px;
+}
+
+.lb-figure{ margin: 0; display: grid; gap: 8px; }
+.lb-img{
+  width: 100%; max-height: 70vh; object-fit: contain; display: block;
+  border-radius: 12px;
+  background: radial-gradient(1200px 400px at 50% 50%, rgba(255,255,255,.08), transparent);
+}
+.lb-caption{ color: var(--muted, #a7acb7); font-size: 14px; text-align: center; }
+
+.lb-close{
+  position: absolute; top: 8px; right: 8px;
+  /* width: 40px; height: 40px; */
+  border: 0; border-radius: 10px;
+  background: rgba(0,0,0,.35);
+  color: var(--accent); font-size: 20px; line-height: 20px; cursor: pointer;
+  padding: 8px;
+}
+.lb-close:hover{ background: rgba(0,0,0,.5); }
+
+.lb-nav{
+  text-decoration: none;
+  position: absolute; top: 50%; transform: translateY(-50%); 
+  width: 40px; height: 60px; border: 0; cursor: pointer;
+  border-radius: 10px;
+  background: rgba(0,0,0,.35); color: var(--accent); font-size: 20px; line-height: 0px; padding: 0%;
+  user-select: none;
+}
+.lb-prev{ left: 8px;  }
+.lb-next{ right: 8px; }
+.lb-nav:hover{ background: rgba(0,0,0,.5); }
+
+@media (max-width: 768px){
+  .lb-dialog{ padding: 12px 48px; width: min(96vw, 1000px); }
+  .lb-caption{ font-size: 13px; }
+}
+
+
+

@@ -139,7 +139,152 @@
     const flog = (...a) => { if (DEV_FALLBACK_LOG) console.log('[fallback]', ...a); };
     // ####################################
 
+
+
+    // ####################################
+    // ===== Lazy-изображения в карточках =====
+    const HIGH_PRIORITY_BUDGET = 6;      // сколько первых превью грузим с fetchpriority="high"
+    let highPriorityLeft = HIGH_PRIORITY_BUDGET;
+
+    const thumbObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const img = entry.target;
+        const src = img.getAttribute('data-src');
+        if (!src) { thumbObserver.unobserve(img); continue; }
+        img.src = src;                         // старт фактической загрузки
+        img.removeAttribute('data-src');
+        img.addEventListener('load', () => img.classList.remove('lazy-img'), { once: true });
+        thumbObserver.unobserve(img);
+      }
+    }, { rootMargin: '200px 0px', threshold: 0.01 });
+    // ####################################
+
+
+
+
+
+
 //  #################################################################################################################################################################
+
+    // ####################################
+    // ===== Lightbox (modal carousel) =====
+    const lbState = { images: [], index: 0, title: '' };
+    let lb = null;
+
+    function ensureLightbox() {
+      if (lb) return lb;
+      const root = document.createElement('div');
+      root.className = 'lightbox';
+      root.setAttribute('role', 'dialog');
+      root.setAttribute('aria-modal', 'true');
+      root.setAttribute('aria-label', 'Просмотр изображений');
+      root.hidden = true;
+      root.innerHTML = `
+        <div class="lb-backdrop" data-lb="backdrop"></div>
+        <div class="lb-dialog">
+          <button class="lb-close" data-lb="close" aria-label="Закрыть">✕</button>
+          <button class="lb-nav lb-prev" data-lb="prev" aria-label="Назад">⫷</button>
+          <figure class="lb-figure">
+            <img class="lb-img" data-lb="img" alt="">
+            <figcaption class="lb-caption" data-lb="cap"></figcaption>
+          </figure>
+          <button class="lb-nav lb-next" data-lb="next" aria-label="Вперёд">⫸</button>
+        </div>
+      `;
+      document.body.appendChild(root);
+
+      const img = root.querySelector('[data-lb="img"]');
+      const cap = root.querySelector('[data-lb="cap"]');
+      const btnClose = root.querySelector('[data-lb="close"]');
+      const btnPrev  = root.querySelector('[data-lb="prev"]');
+      const btnNext  = root.querySelector('[data-lb="next"]');
+      const backdrop = root.querySelector('[data-lb="backdrop"]');
+
+
+      // клики
+      btnClose.addEventListener('click', closeLightbox);
+      backdrop.addEventListener('click', closeLightbox);
+      btnPrev.addEventListener('click', () => stepLightbox(-1));
+      btnNext.addEventListener('click', () => stepLightbox(+1));
+
+
+      // клавиатура
+      root.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape') return closeLightbox();
+        if (e.key === 'ArrowLeft') return stepLightbox(-1);
+        if (e.key === 'ArrowRight') return stepLightbox(+1);
+      });
+
+
+      // свайпы (очень простая реализация)
+      let sx = 0, sy = 0, moved = false;
+      root.addEventListener('touchstart', (e)=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false; }, {passive:true});
+      root.addEventListener('touchmove',  (e)=>{ moved=true; }, {passive:true});
+      root.addEventListener('touchend',   (e)=>{
+        if (!moved) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+          stepLightbox(dx > 0 ? -1 : +1);
+        }
+      }, {passive:true});
+
+      lb = { root, img, cap, btnPrev, btnNext };
+      return lb;
+    }
+
+    function openLightbox(images, startIndex=0, title='') {
+      const box = ensureLightbox();
+      lbState.images = images.filter(Boolean);
+      lbState.index  = Math.min(Math.max(0, startIndex), lbState.images.length-1);
+      lbState.title  = title || '';
+
+      if (!lbState.images.length) return;
+
+      updateLightbox();
+      box.root.hidden = false;
+      box.root.tabIndex = -1;
+      box.root.focus();
+      document.documentElement.classList.add('lb-lock'); // запрет прокрутки фона
+    }
+
+    function closeLightbox() {
+      if (!lb) return;
+      lb.root.hidden = true;
+      document.documentElement.classList.remove('lb-lock');
+    }
+
+    function stepLightbox(d=1) {
+      const n = lbState.images.length;
+      if (n <= 1) return;
+      lbState.index = (lbState.index + d + n) % n; // кольцевая прокрутка
+      updateLightbox(true);
+    }
+
+    function updateLightbox(preload=true) {
+      const { images, index, title } = lbState;
+      const url = images[index];
+      lb.img.src = url;
+      lb.img.alt = `${title ? title + ' — ' : ''}фото ${index+1} из ${images.length}`;
+      lb.cap.textContent = `${index+1} / ${images.length}${title ? ' — ' + title : ''}`;
+
+
+      // предзагрузка соседних, чтобы листалось мгновенно
+      if (preload && images.length > 1) {
+        const a = new Image(); a.src = images[(index+1) % images.length];
+        const b = new Image(); b.src = images[(index-1+images.length) % images.length];
+      }
+    }
+    // ####################################
+
+
+
+
+
+
+
+
 
     // ####################################
     // Есть ли у лота хоть одно фото (быстрая проверка «живой» папки)
@@ -661,9 +806,65 @@
     // ####################################
 
 
+    // ####################################
+
+    function escapeHtml(s=''){ 
+      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    function cardEl(lot){
+      const title = escapeHtml(lot.title || '');
+      const url   = lot.url || '#';
+      const imgs  = Array.isArray(lot.images) ? lot.images.slice(0,3) : [];
+      const cover = imgs[0] || ph(800,600,'Фото');
+
+      const el = document.createElement('article');
+      el.className = 'card';
+
+      // fetchpriority только для первых карточек страницы
+      const prio = (highPriorityLeft-- > 0) ? ' fetchpriority="high"' : '';
+
+      el.innerHTML = `
+        <div class="photos">
+          <div class="mainimg"> <img class="cover" loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[0]||ph(800,600,'Фото'))}"> </div>
+          <div class="thumbs">
+            <div class="thumb"> <img class="lazy-img" loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[1]||lot.images[0]||ph(400,400,'Фото'))}"> </div>
+            <div class="thumb"> <img class="lazy-img" loading="lazy" decoding="async" alt="${lot.title}" src="${(lot.images[2]||lot.images[0]||ph(400,400,'Фото'))}"> </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3 class="title">${lot.title}</h3>
+          <div class="meta">Категория: <span class="muted">${lot.category}</span></div>
+          <a class="more" href="${lot.url}" target="_blank" rel="noopener">
+            <span class="span-correct">Подробнее</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        </div>`;
+
+
+
+      // Открытие лайтбокса по клику
+      const coverEl = qs('.cover', el);
+      coverEl?.addEventListener('click', () => openLightbox(imgs, 0, title));
+
+      const thumbEls = qsa('.thumb', el);
+      thumbEls[0]?.addEventListener('click', () => openLightbox(imgs, 1, title));
+      thumbEls[1]?.addEventListener('click', () => openLightbox(imgs, 2, title));
+
+
+
+      // подписываем ленивые изображения
+      qsa('.lazy-img', el).forEach(img => thumbObserver.observe(img));
+
+      return el;
+    }
+    // ####################################
+
+
+
+
 // ####################################
 // Инициализация (только новый поток)
-
 renderCategories();
 applyFilter('all');
 setTimeout(() => {if(qs('#countInfo').textContent == 'Загрузка…') { qs('#countInfo').textContent = '0 шт' }}, 5000);
