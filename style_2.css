@@ -235,11 +235,11 @@
 
 
 
-@media (max-width: 460px){
+/* @media (max-width: 460px){
   .card{ transform: none; transform: scale(1.18) translateX(-1.5%); }
   .card:hover{ transform: none; }
 }
-@media (hover: hover) and (pointer: fine){.card:hover{ transform: translateY(-2px); } }
+@media (hover: hover) and (pointer: fine){.card:hover{ transform: translateY(-2px); } } */
 
 
 /* ---------- Модальное окно с каруселью ---------- 
