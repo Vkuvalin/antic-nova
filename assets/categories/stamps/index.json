@@ -40,6 +40,16 @@
 	{ "slug": "stamps_37",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Куба: Museo Metropolitano Habana (керамика)", 						"url": "https://meshok.net/item/..." },
 	{ "slug": "stamps_38",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР/ГДР/Польша/ЧССР: Спорт (сборник)", 							"url": "https://meshok.net/item/..." },
 	{ "slug": "stamps_39",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: «40 лет Победы» (1985)", 												"url": "https://meshok.net/item/..." },
-	{ "slug": "stamps_40",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: ВООПИиК — членские взносы (непочт.)", 					"url": "https://meshok.net/item/..." }
+	{ "slug": "stamps_40",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: ВООПИиК — членские взносы (непочт.)", 					"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_41",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: В. И. Ленин (портреты, подборка)",								"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_42",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Соцстраны: сборник марок (СССР осн., + др.)", 						"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_43",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Тематика: рептилии/змеи", 														"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_44",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "НР Болгария: «Цветы» + сувенирный блок", 							"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_45",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Венгрия: религиозная живопись (алтарные сцены)",  			"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_46",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: Музей народов Востока (1969)", 									"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_47",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: Билибин — русские сказки (+1 доп.)", 						"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_48",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Либерия + СССР: EXPO’70/японские фестивали", 				"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_49",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: EXPO’74 «Всё для человека…» (1974)", 						"url": "https://meshok.net/item/..." },
+    { "slug": "stamps_50",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: «Курорты Союза» (КазССР/КиргССР)", 						"url": "https://meshok.net/item/..." }
   ]
 }
