@@ -322,6 +322,17 @@
 
 
 <!-- ############################### JAVASCRIPT ############################### -->
+<script>
+    (function () {
+      var h = window.location.hash;
+      // пусто, "#", или "#/" → отправляем на #gallery
+      if (!h || h === '#' || h === '#/') {
+        // без новой записи в истории
+        window.location.replace(window.location.pathname + window.location.search + '#gallery');
+      }
+    })();
+</script>
+
 <script src="./app_2.js" defer></script>
 <script src="./app.js" defer></script>
 <!-- ########################################################################## -->
