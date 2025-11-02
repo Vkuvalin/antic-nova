@@ -418,26 +418,7 @@ function renderCategories(){
       qsa('#catList .catbtn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       const key = btn.getAttribute('data-cat');
-      if (key === key_name) {
-
-      }else {
-        key_name = key
-        applyFilter(key);
-      }
-
-      document.querySelector('.sidebar')?.classList.add('no-hover');
-      if (window.innerWidth > 768){
-        setTimeout(() => document.querySelector('.sidebar')?.classList.remove('no-hover'), 320);
-      }else {
-        if (counterHover == 0) {
-          document.querySelector('.sidebar')?.classList.remove('no-hover');
-          counterHover = 1;
-        }else{
-          document.querySelector('.sidebar')?.classList.add('no-hover');
-          counterHover = 0;
-        }
-      }
-
+      applyFilter(key);
       document.querySelector('.sidewrap')?.scrollTo({ top: 0, behavior: 'smooth' });
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
