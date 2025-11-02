@@ -50,6 +50,16 @@
 	{ "slug": "stamps_47",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: Билибин — русские сказки (+1 доп.)", 						"url": "https://meshok.net/item/..." },
 	{ "slug": "stamps_48",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Либерия + СССР: EXPO’70/японские фестивали", 				"url": "https://meshok.net/item/..." },
 	{ "slug": "stamps_49",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: EXPO’74 «Всё для человека…» (1974)", 						"url": "https://meshok.net/item/..." },
-    { "slug": "stamps_50",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: «Курорты Союза» (КазССР/КиргССР)", 						"url": "https://meshok.net/item/..." }
+    { "slug": "stamps_50",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: «Курорты Союза» (КазССР/КиргССР)", 						"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_51",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Бурунди: религиозная живопись", 											"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_52",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Польша: народные инструменты II (1985)", 							"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_53",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: персоналии/юбилеи (сборник)", 									"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_54",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР + ГДР: портреты деятелей (сборник)", 							"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_55",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "ДПИ/музейные экспонаты (Европа соц., сборник)", 				"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_56",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Гвинея: грибы (+ авиапочта)", 													"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_57",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Гвинея: 25-летие ВОЗ/вакцины (1973)", 									"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_58",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "ГДР UPU + Куба «Локомотивы» (сборник)",							"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_59",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Гвинея: млекопитающие", 															"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_60",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Куба: «Флора и фауна Кубы» (сборник)", 								"url": "https://meshok.net/item/..." }
   ]
 }
