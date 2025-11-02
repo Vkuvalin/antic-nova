@@ -75,7 +75,7 @@ const PAGE_SIZE_MOBILE  = 4;
 const BATCH_K_ALL       = 2; // «Все»: по 2 лота с категории
 
 // ===== Lazy-изображения в карточках =====
-const HIGH_PRIORITY_BUDGET = 6; // Рендер категорий в сайдбаре
+const HIGH_PRIORITY_BUDGET = 6;
 let highPriorityLeft = HIGH_PRIORITY_BUDGET;
 
 const thumbObserver = new IntersectionObserver((entries) => {
@@ -90,8 +90,6 @@ const thumbObserver = new IntersectionObserver((entries) => {
     thumbObserver.unobserve(img);
   }
 }, { rootMargin: '200px 0px', threshold: 0.01 });
-// #############################################################################################
-
 
 // #############################################################################################
 // LIGHTBOX
@@ -128,20 +126,17 @@ function ensureLightbox() {
   const btnNext  = root.querySelector('[data-lb="next"]');
   const backdrop = root.querySelector('[data-lb="backdrop"]');
 
-  // клики
   btnClose.addEventListener('click', closeLightbox);
   backdrop.addEventListener('click', closeLightbox);
   btnPrev.addEventListener('click', () => stepLightbox(-1));
   btnNext.addEventListener('click', () => stepLightbox(+1));
 
-  // клавиатура
   root.addEventListener('keydown', (e)=>{
     if (e.key === 'Escape') return closeLightbox();
     if (e.key === 'ArrowLeft') return stepLightbox(-1);
     if (e.key === 'ArrowRight') return stepLightbox(+1);
   });
 
-  // свайпы (очень простая реализация)
   let sx = 0, sy = 0, moved = false;
   root.addEventListener('touchstart', (e)=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false; }, {passive:true});
   root.addEventListener('touchmove',  ()=>{ moved=true; }, {passive:true});
@@ -183,23 +178,17 @@ function updateLightbox(preload=true) {
     const b = new Image(); b.src = images[(index-1+images.length) % images.length];
   }
 }
-// #############################################################################################
-
 
 // #############################################################################################
 // MANIFEST (index.json)
 // #############################################################################################
-const MANIFEST_TTL_MS = 15 * 60 * 1000; // 15 минут
-const LS_PREFIX       = 'manifest:';    // ключи в localStorage
-const manifestRAM     = new Map();      // RAM-кэш манифестов
+const MANIFEST_TTL_MS = 15 * 60 * 1000;
+const LS_PREFIX       = 'manifest:';
+const manifestRAM     = new Map();
 
-
-// безопасная работа с LS
 const lsRead  = (k) => { try { const raw = localStorage.getItem(k); return raw ? JSON.parse(raw) : null; } catch { return null; } };
 const lsWrite = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 
-
-// сетевой фетч манифеста
 async function fetchManifest(cat){
   const url = `assets/categories/${encodeURIComponent(cat)}/index.json`;
   const res = await fetch(url, { cache: 'no-cache' });
@@ -209,8 +198,6 @@ async function fetchManifest(cat){
   return data;
 }
 
-
-// RAM → localStorage (TTL) → сеть
 async function loadManifest(cat){
   if (manifestRAM.has(cat)) return manifestRAM.get(cat);
   const key = `${LS_PREFIX}${cat}`;
@@ -228,7 +215,6 @@ async function loadManifest(cat){
   return data;
 }
 
-// нормализация записей из манифеста
 function entriesFromManifest(cat, manifest){
   const lots = Array.isArray(manifest?.lots) ? manifest.lots : [];
   return lots.map(l => ({
@@ -239,7 +225,6 @@ function entriesFromManifest(cat, manifest){
   }));
 }
 
-// сборка объекта лота (для renderNextBatch)
 function lotFromEntry(cat, entry, version){
   const base  = `assets/categories/${encodeURIComponent(cat)}/${encodeURIComponent(entry.slug)}`;
   const imgs  = (entry.files || []).slice(0,3).map(fn => `${base}/${fn}?v=${encodeURIComponent(version||'')}`);
@@ -251,8 +236,6 @@ function lotFromEntry(cat, entry, version){
     images:   imgs.length ? imgs : [ph(800,600,'Фото')]
   };
 }
-// #############################################################################################
-
 
 // #############################################################################################
 // СЕТЬ/УСТРОЙСТВО
@@ -266,8 +249,6 @@ function networkLimit() {
   if (t === '3g') return 3;
   return 4;
 }
-// #############################################################################################
-
 
 // #############################################################################################
 // СОСТОЯНИЕ
@@ -291,20 +272,16 @@ function resetGalleryState() {
   galleryState.version = '';
   galleryState.allPacks = null;
 }
-// #############################################################################################
-
 
 // #############################################################################################
 // СБОРЩИКИ ПАРТИЙ
 // #############################################################################################
-// SINGLE: вернуть записи текущей страницы
 function getSingleBatch() {
   const from = galleryState.page * galleryState.pageSize;
   const to   = Math.min(from + galleryState.pageSize, galleryState.entries.length);
   return galleryState.entries.slice(from, to);
 }
 
-// ALL: собрать по K записей из каждой категории (циклически)
 function getAllBatch() {
   const packs = galleryState.allPacks || [];
   const out = [];
@@ -319,13 +296,10 @@ function getAllBatch() {
   return { items: out, hasMore };
 }
 
-// Быстрое наличие следующей порции
 function hasMoreSingle() {
   const nextFrom = (galleryState.page + 1) * galleryState.pageSize;
   return nextFrom < galleryState.entries.length;
 }
-// #############################################################################################
-
 
 // #############################################################################################
 // ПРЕФЕТЧ
@@ -348,8 +322,6 @@ function prefetchImages(urls, limit = networkLimit()) {
     inFlight++;
   }
 }
-// #############################################################################################
-
 
 // #############################################################################################
 // РЕНДЕР ПАРТИИ (без fallback-веток)
@@ -424,16 +396,14 @@ qs('#loadMore')?.addEventListener('click', () => {
   galleryState.page++;
   renderNextBatch(mySeq);
 });
-// #############################################################################################
-
 
 // #############################################################################################
-// Рендер категорий в сайдбаре
+// САЙДБАР КАТЕГОРИЙ (без изменений)
 // #############################################################################################
 function renderCategories(){
   const list = qs('#catList');
   list.innerHTML = '';
-  categories.forEach((c, idx) =>{
+  categories.forEach((c) =>{
     const li = document.createElement('li');
     li.innerHTML = `
       <button class="catbtn ${c.key==='all' ? 'active':''}" data-cat="${c.key}" aria-pressed="${c.key==='all'}">
@@ -443,32 +413,12 @@ function renderCategories(){
     list.appendChild(li);
   });
 
-  // Навешиваем клики
   qsa('#catList .catbtn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       qsa('#catList .catbtn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       const key = btn.getAttribute('data-cat');
-      if (key === key_name) {
-
-      }else {
-        key_name = key
-        applyFilter(key);
-      }
-
-      document.querySelector('.sidebar')?.classList.add('no-hover');
-      if (window.innerWidth > 768){
-        setTimeout(() => document.querySelector('.sidebar')?.classList.remove('no-hover'), 320);
-      }else {
-        if (counterHover == 0) {
-          document.querySelector('.sidebar')?.classList.remove('no-hover');
-          counterHover = 1;
-        }else{
-          document.querySelector('.sidebar')?.classList.add('no-hover');
-          counterHover = 0;
-        }
-      }
-
+      applyFilter(key);
       document.querySelector('.sidewrap')?.scrollTo({ top: 0, behavior: 'smooth' });
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
@@ -476,9 +426,6 @@ function renderCategories(){
     });
   });
 }
-// #############################################################################################
-
-
 
 // #############################################################################################
 // СБОРКА КАРТОЧКИ
@@ -522,8 +469,6 @@ function cardEl(lot){
   qsa('.lazy-img', el).forEach(img => thumbObserver.observe(img));
   return el;
 }
-// #############################################################################################
-
 
 // #############################################################################################
 // ПРИМЕНЕНИЕ ФИЛЬТРА (Только manifest; без fallback сканера)
@@ -568,10 +513,6 @@ async function applyFilter(key){
     renderNextBatch(mySeq);
   }
 }
-// #############################################################################################
-
-
-
 
 // #############################################################################################
 // ИНИЦИАЛИЗАЦИЯ
@@ -579,6 +520,3 @@ async function applyFilter(key){
 renderCategories();
 applyFilter('all');
 // setTimeout(() => { if(qs('#countInfo').textContent === 'Загрузка…') { qs('#countInfo').textContent = '0 шт'; } }, 5000);
-
-
-
