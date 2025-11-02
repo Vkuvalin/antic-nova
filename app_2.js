@@ -255,6 +255,9 @@ function networkLimit() {
 // #############################################################################################
 let loadSeq = 0;
 
+// помним последнюю выбранную категорию
+let key_name = 'all';
+
 const galleryState = {
   key: null,            // 'all' или <category>
   mode: 'single',       // 'single' | 'all'
@@ -415,10 +418,32 @@ function renderCategories(){
 
   qsa('#catList .catbtn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
+      // переключаем активную кнопку
       qsa('#catList .catbtn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
+
+      // грузим только если категория реально поменялась
       const key = btn.getAttribute('data-cat');
-      applyFilter(key);
+      if (key !== key_name) {
+        key_name = key;
+        applyFilter(key);
+      }
+
+      // СКРЫТИЕ САЙДБАРА НА МОБИЛЕ (и анти-залипание hover на десктопе)
+      const sb = document.querySelector('.sidebar');
+      if (sb) {
+        // всегда ставим no-hover сразу после клика
+        sb.classList.add('no-hover');
+
+        // на десктопе быстро снимаем, чтобы hover снова работал
+        if (!isMobile()) {
+          setTimeout(() => sb.classList.remove('no-hover'), 320);
+        }
+        // на мобиле оставляем no-hover — панель «схлопывается» после выбора
+        // (если захочешь — можно добавить свою кнопку, которая снимает класс)
+      }
+
+      // скроллим наверх
       document.querySelector('.sidewrap')?.scrollTo({ top: 0, behavior: 'smooth' });
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
