@@ -1,5 +1,5 @@
 {
-  "version": "2025-11-02T18:00:00Z",
+  "version": "2025-11-02T19:00:00Z",
   "lots": [
     { "slug": "stamps_1",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Umm al-Qiwain: Life of Christ (sheetlet)", 									"url": "https://meshok.net/item/..." },
     { "slug": "stamps_2",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Ajman: Life of Christ (sheetlet)",													"url": "https://meshok.net/item/..." },
@@ -60,6 +60,17 @@
 	{ "slug": "stamps_57",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Гвинея: 25-летие ВОЗ/вакцины (1973)", 									"url": "https://meshok.net/item/..." },
 	{ "slug": "stamps_58",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "ГДР UPU + Куба «Локомотивы» (сборник)", 							"url": "https://meshok.net/item/..." },
 	{ "slug": "stamps_59",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Гвинея: млекопитающие", 															"url": "https://meshok.net/item/..." },
-	{ "slug": "stamps_60",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Куба: «Флора и фауна Кубы» (сборник)", 								"url": "https://meshok.net/item/..." }
+	{ "slug": "stamps_60",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Куба: «Флора и фауна Кубы» (сборник)", 								"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_61",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "ЧССР: PRAGA/юбилеи/техника", 												"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_62",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР/ГДР/НРБ: выставки/наука/учреждения", 						"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_63",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР + НРБ: политические/юбилейные выпуски", 				"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_64",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Монголия: сборный набор", 														"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_65",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Юбилейно-политическая тематика (сборник)", 						"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_66",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Фауна/охрана природы (СССР + Экв. Гвинея)", 						"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_67",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "СССР: морские млекопитающие (1971–1990, сборник)", 		"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_68",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Птицы (СССР + ГДР)", 																"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_69",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Польша + Венгрия: коммеморативы (сборник)", 					"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_70",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Архитектура и города (Вост. Европа, сборник)", 					"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_71",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Цветы/растения (сборный набор)", 											"url": "https://meshok.net/item/..." }
   ]
 }
