@@ -104,6 +104,9 @@
     ];
     // ####################################
 
+
+
+    
     // ====== Директории и форматы ======
     const CATEGORY_DIRS   = ['assets/categories', 'assets/catigories']; // алиас поддержан
     const IMG_EXTS        = ['webp','avif','png','jpg','jpeg'];

@@ -1,0 +1,15 @@
+{
+  "version": "2025-11-02T14:00:00Z",
+  "lots": [
+    { "slug": "ussr_photos_1",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Групповое фото высшего командного состава", 												"url": "https://meshok.net/item/..." },
+    { "slug": "ussr_photos_2",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Две советские фотографии с И.В. Сталиным (1943-1946)",						 	"url": "https://meshok.net/item/..." },
+	{ "slug": "ussr_photos_3",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Заседание Президиума Верховного Совета СССР", 										"url": "https://meshok.net/item/..." },
+	{ "slug": "ussr_photos_4",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Иосиф Виссарионович Сталин в гробу Колонном зале Дома Союзов", 		"url": "https://meshok.net/item/..." },
+	{ "slug": "ussr_photos_5",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Два типографиских фотолиста (агитационные репродукции)", 					"url": "https://meshok.net/item/..." },
+	{ "slug": "ussr_photos_6",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Набор: И.В. Сталин - три портретных листа. Взросление.", 							"url": "https://meshok.net/item/..." },
+	{ "slug": "ussr_photos_7",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Два отдельных портретных отпечатка", 															"url": "https://meshok.net/item/..." },
+	{ "slug": "ussr_photos_8",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "И.В, Сталин и А. М. Горький. Совместное фото.", 											"url": "https://meshok.net/item/..." },
+	{ "slug": "ussr_photos_9",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "И.В. Сталин на палубе крейсера 'Чернова Украина'. 2029 год", 					"url": "https://meshok.net/item/..." },
+	{ "slug": "ussr_photos_10",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "И.В. Сталин среди детей на Тушинском аэродроме. 1936 год", 					"url": "https://meshok.net/item/..." }
+  ]
+}
