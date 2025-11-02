@@ -5,6 +5,16 @@ const qs  = (s, r=document) => r.querySelector(s);
 const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
 const joinUrl = (...parts)=>parts.map(p=>String(p).replace(/(^\/|\/$)/g,'')).join('/');
 
+
+// Глобальное состояние загрузки категории
+let currentController = null;   // для отмены предыдущего запроса
+let lastReqId = 0;              // чтобы игнорировать «устаревшие» ответы
+
+const setCountLoading = () => { qs('#countInfo').textContent = 'Загрузка…'; };
+const setCount = (n) => { qs('#countInfo').textContent = `${n} шт`; };
+
+
+
 // Плейсхолдер изображений (inline SVG в data URI)
 const ph = (w, h, text) => {
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'>\
@@ -343,6 +353,10 @@ async function renderNextBatch(mySeq) {
     qs('#countInfo').textContent = `${wrap.children.length} шт`;
   }
 
+  if (mySeq === loadSeq) {
+    qs('#countInfo').textContent = `${wrap.children.length} шт`;
+  }
+
   const btn = qs('#loadMore');
   if (hasMore) btn.removeAttribute('disabled'); else btn.setAttribute('disabled', '');
 
@@ -480,6 +494,7 @@ async function applyFilter(key){
       // Нет манифеста — считаем категорию пустой
       galleryState.version = '';
       galleryState.entries = [];
+      qs('#countInfo').textContent = '0 шт'; // можно добавить эту строку
     }
     galleryState.page = 0;
     renderNextBatch(mySeq);
@@ -504,4 +519,4 @@ async function applyFilter(key){
 // #############################################################################################
 renderCategories();
 applyFilter('all');
-setTimeout(() => { if(qs('#countInfo').textContent === 'Загрузка…') { qs('#countInfo').textContent = '0 шт'; } }, 5000);
+// setTimeout(() => { if(qs('#countInfo').textContent === 'Загрузка…') { qs('#countInfo').textContent = '0 шт'; } }, 5000);
