@@ -1,5 +1,5 @@
 {
-  "version": "2025-11-02T17:00:00Z",
+  "version": "2025-11-02T18:00:00Z",
   "lots": [
     { "slug": "stamps_1",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Umm al-Qiwain: Life of Christ (sheetlet)", 									"url": "https://meshok.net/item/..." },
     { "slug": "stamps_2",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Ajman: Life of Christ (sheetlet)",													"url": "https://meshok.net/item/..." },
@@ -58,7 +58,7 @@
 	{ "slug": "stamps_55",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "ДПИ/музейные экспонаты (Европа соц., сборник)", 				"url": "https://meshok.net/item/..." },
 	{ "slug": "stamps_56",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Гвинея: грибы (+ авиапочта)", 													"url": "https://meshok.net/item/..." },
 	{ "slug": "stamps_57",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Гвинея: 25-летие ВОЗ/вакцины (1973)", 									"url": "https://meshok.net/item/..." },
-	{ "slug": "stamps_58",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "ГДР UPU + Куба «Локомотивы» (сборник)",							"url": "https://meshok.net/item/..." },
+	{ "slug": "stamps_58",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "ГДР UPU + Куба «Локомотивы» (сборник)", 							"url": "https://meshok.net/item/..." },
 	{ "slug": "stamps_59",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Гвинея: млекопитающие", 															"url": "https://meshok.net/item/..." },
 	{ "slug": "stamps_60",      			"files": ["1.jpg","2.jpg","GPT.jpg"], 	"title": "Куба: «Флора и фауна Кубы» (сборник)", 								"url": "https://meshok.net/item/..." }
   ]
