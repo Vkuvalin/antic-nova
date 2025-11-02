@@ -579,3 +579,6 @@ async function applyFilter(key){
 renderCategories();
 applyFilter('all');
 // setTimeout(() => { if(qs('#countInfo').textContent === 'Загрузка…') { qs('#countInfo').textContent = '0 шт'; } }, 5000);
+
+
+
