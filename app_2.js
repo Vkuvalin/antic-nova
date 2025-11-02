@@ -257,6 +257,7 @@ let loadSeq = 0;
 
 // помним последнюю выбранную категорию
 let key_name = 'all';
+let counterHover = 0;
 
 const galleryState = {
   key: null,            // 'all' или <category>
@@ -418,29 +419,27 @@ function renderCategories(){
 
   qsa('#catList .catbtn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      // переключаем активную кнопку
-      qsa('#catList .catbtn').forEach(b=>b.classList.remove('active'));
+      qsa('#catList .catbtn').forEach(b=>b.classList.remove('active')); // переключаем активную кнопку
       btn.classList.add('active');
 
-      // грузим только если категория реально поменялась
-      const key = btn.getAttribute('data-cat');
+      const key = btn.getAttribute('data-cat'); // грузим только если категория реально поменялась
       if (key !== key_name) {
         key_name = key;
         applyFilter(key);
       }
 
       // СКРЫТИЕ САЙДБАРА НА МОБИЛЕ (и анти-залипание hover на десктопе)
-      const sb = document.querySelector('.sidebar');
-      if (sb) {
-        // всегда ставим no-hover сразу после клика
-        sb.classList.add('no-hover');
-
-        // на десктопе быстро снимаем, чтобы hover снова работал
-        if (!isMobile()) {
-          setTimeout(() => sb.classList.remove('no-hover'), 320);
+      document.querySelector('.sidebar')?.classList.add('no-hover');
+      if (window.innerWidth > 768){
+        setTimeout(() => document.querySelector('.sidebar')?.classList.remove('no-hover'), 320);
+      }else {
+        if (counterHover == 0) {
+          document.querySelector('.sidebar')?.classList.remove('no-hover');
+          counterHover = 1;
+        }else{
+          document.querySelector('.sidebar')?.classList.add('no-hover');
+          counterHover = 0;
         }
-        // на мобиле оставляем no-hover — панель «схлопывается» после выбора
-        // (если захочешь — можно добавить свою кнопку, которая снимает класс)
       }
 
       // скроллим наверх
