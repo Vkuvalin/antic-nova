@@ -51,8 +51,8 @@ const icons = {
 
 const categories = [
   { key: 'all',                      label: 'Все' },
-  { key: 'stamps',                   label: 'Марки' },
-  { key: 'ussr_photos',              label: 'Фотографии глав СССР' },
+  // { key: 'stamps',                   label: 'Марки' },
+  // { key: 'ussr_photos',              label: 'Фотографии глав СССР' },
   { key: 'medals',                   label: 'Медали' },
   { key: 'badges',                   label: 'Значки' },
   { key: 'coins',                    label: 'Монеты' },
