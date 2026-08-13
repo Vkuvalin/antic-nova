@@ -74,23 +74,6 @@ const PAGE_SIZE_DESKTOP = 8;
 const PAGE_SIZE_MOBILE  = 4;
 const BATCH_K_ALL       = 2; // «Все»: по 2 лота с категории
 
-// ===== Lazy-изображения в карточках =====
-const HIGH_PRIORITY_BUDGET = 6;
-let highPriorityLeft = HIGH_PRIORITY_BUDGET;
-
-const thumbObserver = new IntersectionObserver((entries) => {
-  for (const entry of entries) {
-    if (!entry.isIntersecting) continue;
-    const img = entry.target;
-    const src = img.getAttribute('data-src');
-    if (!src) { thumbObserver.unobserve(img); continue; }
-    img.src = src;
-    img.removeAttribute('data-src');
-    img.addEventListener('load', () => img.classList.remove('lazy-img'), { once: true });
-    thumbObserver.unobserve(img);
-  }
-}, { rootMargin: '200px 0px', threshold: 0.01 });
-
 // #############################################################################################
 // LIGHTBOX
 // #############################################################################################
@@ -241,14 +224,6 @@ function lotFromEntry(cat, entry, version){
 // СЕТЬ/УСТРОЙСТВО
 // #############################################################################################
 function isMobile() { return matchMedia('(max-width: 859px)').matches; }
-function networkLimit() {
-  const c = navigator.connection || {};
-  if (c.saveData) return 2;
-  const t = c.effectiveType || '';
-  if (t.includes('2g')) return 2;
-  if (t === '3g') return 3;
-  return 4;
-}
 
 // #############################################################################################
 // СОСТОЯНИЕ
@@ -306,28 +281,6 @@ function hasMoreSingle() {
 }
 
 // #############################################################################################
-// ПРЕФЕТЧ
-// #############################################################################################
-function prefetchImages(urls, limit = networkLimit()) {
-  const c = navigator.connection || {};
-  if (c.saveData) return;
-  const t = c.effectiveType || '';
-  if (t.includes('2g')) return;
-
-  const head = document.head || document.documentElement;
-  let inFlight = 0;
-  for (const u of urls) {
-    if (inFlight >= limit) break;
-    const link = document.createElement('link');
-    link.rel = 'prefetch';
-    link.as  = 'image';
-    link.href = u;
-    head.appendChild(link);
-    inFlight++;
-  }
-}
-
-// #############################################################################################
 // РЕНДЕР ПАРТИИ (без fallback-веток)
 // #############################################################################################
 async function renderNextBatch(mySeq) {
@@ -351,7 +304,7 @@ async function renderNextBatch(mySeq) {
     if (mySeq !== loadSeq) return;
     const uid = lot.id || `${lot.category}/${lot.title}`;
     if (seen.has(uid)) continue;
-    const el = cardEl(lot);
+    const el = cardEl(lot, wrap.children.length === 0);
     el.dataset.uid = uid;
     wrap.appendChild(el);
     qs('#countInfo').textContent = `${wrap.children.length} шт`;
@@ -363,35 +316,6 @@ async function renderNextBatch(mySeq) {
 
   const btn = qs('#loadMore');
   if (hasMore) btn.removeAttribute('disabled'); else btn.setAttribute('disabled', '');
-
-  if (hasMore && mySeq === loadSeq) {
-    let nextUrls = [];
-    if (galleryState.mode === 'single') {
-      const nextPage = galleryState.page + 1;
-      const from = nextPage * galleryState.pageSize;
-      const to   = Math.min(from + galleryState.pageSize, galleryState.entries.length);
-      const upcoming = galleryState.entries.slice(from, to);
-      nextUrls = upcoming.map(e => {
-        const base = `assets/categories/${encodeURIComponent(galleryState.key)}/${encodeURIComponent(e.slug)}`;
-        const f = (e.files && e.files[0]) ? e.files[0] : '1.jpg';
-        return `${base}/${f}?v=${encodeURIComponent(galleryState.version||'')}`;
-      });
-    } else {
-      const nextList = [];
-      for (const p of (galleryState.allPacks || [])) {
-        if (p.cursor < p.entries.length) {
-          const e = p.entries[p.cursor];
-          if (e) nextList.push({ e, cat: p.cat, version: p.version });
-        }
-      }
-      nextUrls = nextList.map(({e, cat, version}) => {
-        const base = `assets/categories/${encodeURIComponent(cat)}/${encodeURIComponent(e.slug)}`;
-        const f = (e.files && e.files[0]) ? e.files[0] : '1.jpg';
-        return `${base}/${f}?v=${encodeURIComponent(version||'')}`;
-      });
-    }
-    prefetchImages(nextUrls);
-  }
 }
 
 // Кнопка «Показать ещё»
@@ -458,21 +382,22 @@ function escapeHtml(s=''){
   return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-function cardEl(lot){
+function cardEl(lot, isPrimary = false){
   const title = escapeHtml(lot.title || '');
   const imgs  = Array.isArray(lot.images) ? lot.images.slice(0,3) : [];
   const el = document.createElement('article');
   el.className = 'card';
 
-  const eager = (highPriorityLeft-- > 0);
-  const loadingAttr = eager ? 'eager' : 'lazy';
+  const coverLoadingAttrs = isPrimary
+    ? 'loading="eager" fetchpriority="high"'
+    : 'loading="lazy"';
 
   el.innerHTML = `
     <div class="photos">
-      <div class="mainimg"><img class="cover" loading="${loadingAttr}" decoding="async" alt="${title}" src="${(imgs[0]||ph(800,600,'Фото'))}"></div>
+      <div class="mainimg"><img class="cover" ${coverLoadingAttrs} decoding="async" alt="${title}" src="${(imgs[0]||ph(800,600,'Фото'))}"></div>
       <div class="thumbs">
-        <div class="thumb"><img class="lazy-img" loading="${loadingAttr}" decoding="async" alt="${title}" src="${(imgs[1]||imgs[0]||ph(400,400,'Фото'))}"></div>
-        <div class="thumb"><img class="lazy-img" loading="${loadingAttr}" decoding="async" alt="${title}" src="${(imgs[2]||imgs[0]||ph(400,400,'Фото'))}"></div>
+        <div class="thumb"><img loading="lazy" decoding="async" alt="${title}" src="${(imgs[1]||imgs[0]||ph(400,400,'Фото'))}"></div>
+        <div class="thumb"><img loading="lazy" decoding="async" alt="${title}" src="${(imgs[2]||imgs[0]||ph(400,400,'Фото'))}"></div>
       </div>
     </div>
     <div class="card-body">
@@ -490,7 +415,6 @@ function cardEl(lot){
   thumbEls[0]?.addEventListener('click', () => openLightbox(imgs, 1, title));
   thumbEls[1]?.addEventListener('click', () => openLightbox(imgs, 2, title));
 
-  qsa('.lazy-img', el).forEach(img => thumbObserver.observe(img));
   return el;
 }
 
